@@ -10,7 +10,7 @@ export default function App() {
     app.use(express.json());
 
     app.get('/', (req: express.Request, res: express.Response) => {
-        res.status(200).send("Hello World!");
+        res.status(200).send("Server running!");
     });
 
     app.listen(+port, () => {
