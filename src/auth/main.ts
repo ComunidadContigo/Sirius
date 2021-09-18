@@ -1,0 +1,9 @@
+import AuthServer from "./api";
+
+const port: string = process.env.PORT || "4000";
+const host: string = process.env.HOST || "localhost";
+
+AuthServer().listen(+port, () => {
+    // TODO change this to an actual logger
+    console.log(`App is listening on http://${host}:${port} on environment ${process.env.NODE_ENV}`);
+});
