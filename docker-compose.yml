@@ -1,0 +1,29 @@
+services:
+  auth:
+    container_name: auth_service
+    build:
+      dockerfile: ./docker/Dockerfile.auth
+      context: .
+    ports:
+      - "3001:80"
+  buddy:
+    container_name: buddy_service
+    build:
+      dockerfile: ./docker/Dockerfile.buddy
+      context: .
+    ports:
+      - "3002:80"
+  user:
+    container_name: user_service
+    build:
+      dockerfile: ./docker/Dockerfile.user
+      context: .
+    ports:
+      - "3003:80"
+  realtime:
+    container_name: realtime_service
+    build:
+      dockerfile: ./docker/Dockerfile.realtime
+      context: .
+    ports:
+      - "3004:80"
