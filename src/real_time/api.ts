@@ -1,13 +1,21 @@
 import { createServer, Server } from "http";
 import { Server as IOServer, Socket } from "socket.io";
+import environmentConfig from "../../src/common/config/environment.config";
+import { Pool } from "pg";
 
 export default function RealTimeServer(): Server {
-    const httpServer: Server = createServer();
-    const io: IOServer = new IOServer(httpServer, { /* options */ });
+  const httpServer: Server = createServer();
+  const io: IOServer = new IOServer(httpServer, {
+    /* options */
+  });
 
-    io.on("connection", (socket: Socket) => {
-        console.log("got a new connection from: " + socket.id);
-    });
+  // set up DB connection
+  // TODO: Wire it to the httpServer. Maybe convert this to an express app?
+  const pool: Pool = new Pool(environmentConfig.dbconf);
 
-    return httpServer;
+  io.on("connection", (socket: Socket) => {
+    console.log("got a new connection from: " + socket.id);
+  });
+
+  return httpServer;
 }
