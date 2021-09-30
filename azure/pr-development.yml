@@ -1,0 +1,18 @@
+# Pipeline to trigger merge check and test for every Pull Request targetting branch 'development'. 
+
+pr:
+- development
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm run test
+  displayName: 'npm install and test'
