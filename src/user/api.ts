@@ -1,15 +1,13 @@
 import express from "express";
 import cors from "cors";
 import api_router from "./routes/router";
-import environmentConfig from "../../src/common/config/environment.config";
 import { Pool } from "pg";
 
-export default function UserServer(): express.Application {
+export default function UserServer(dbPool: Pool): express.Application {
   const app: express.Application = express();
 
   // set up DB connection
-  const pool: Pool = new Pool(environmentConfig.dbconf);
-  app.set("dbPool", pool);
+  app.set("dbPool", dbPool);
 
   // add middleware
   app.use(cors()); // adds CORS policy
