@@ -29,6 +29,7 @@
     "eslint": "^7.32.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "mocha": "^9.1.1",
+    "mocha-junit-reporter": "^2.0.0",
     "pgmock2": "^2.1.0",
     "socket.io-client": "^4.2.0",
     "ts-mocha": "^8.0.0",
@@ -45,6 +46,7 @@
     "dev-buddy": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/buddy/main.js\"",
     "dev-realtime": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/real_time/main.js\"",
     "test": "cross-env NODE_ENV=development mocha -r ts-node/register --exit 'test/**/*.test.ts'",
+    "test:ci": "cross-env NODE_ENV=development mocha -r ts-node/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts"
   },
   "repository": {
