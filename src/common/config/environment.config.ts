@@ -82,7 +82,7 @@ const prodConf: Environment = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const e: any = {
-  dev: devConf,
+  development: devConf,
   staging: stagingConf,
   test: testConf,
   prod: prodConf,
