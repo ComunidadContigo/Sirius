@@ -1,10 +1,8 @@
-const env = process.env.NODE_ENV || "local";
+const env = process.env.NODE_ENV || "development";
 
-if (env === "development") {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const dotenv = require("dotenv");
-  dotenv.config();
-}
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const dotenv = require("dotenv");
+dotenv.config();
 
 export interface Environment {
   dbconf: DBConfig;
@@ -26,15 +24,15 @@ export interface DBConfig {
 // used for local development
 const devConf: Environment = {
   dbconf: {
-    user: process.env.LOCAL_DBUSER || "",
-    password: process.env.LOCAL_DBPASS || "",
-    url: process.env.LOCAL_DBURL || "",
-    port: Number(process.env.LOCAL_DBPORT),
+    user: process.env.DEV_DBUSER || "",
+    password: process.env.DEV_DBPASS || "",
+    url: process.env.DEV_DBURL || "",
+    port: Number(process.env.DEV_DBPORT),
   },
 
   hostconf: {
-    host: process.env.LOCAL_HOST || "",
-    port: Number(process.env.LOCAL_PORT || ""),
+    host: process.env.DEV_HOST || "",
+    port: Number(process.env.DEV_PORT || ""),
   },
 };
 
