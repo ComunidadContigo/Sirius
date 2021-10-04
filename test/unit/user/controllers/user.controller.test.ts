@@ -5,11 +5,13 @@ import { Pool } from "pg";
 import UserController from "../../../../src/user/controllers/user.controller";
 import User from "../../../../src/user/models/user.model";
 import { buildUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
+import HttpError from "../../../../src/common/models/error.model";
 
 describe("User Controller", () => {
   let pgmock: PGMock2;
   beforeEach(() => {
     pgmock = new PGMock2();
+    pgmock.dropAll();
   });
 
   it("should be able to get all users", (done: Done) => {
@@ -108,6 +110,17 @@ describe("User Controller", () => {
       'INSERT INTO "user" (email, password, user_name, phone_number, user_rating) VALUES' +
       "('$1', '$2', '$3', '$4', '$5');";
 
+    // since createUser also queries for taken emails and usernames, we need to add those too
+    pgmock.add("SELECT * FROM \"user\" WHERE email = '$1';", ["string"], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    pgmock.add("SELECT * FROM \"user\" WHERE user_name = '$1';", ["string"], {
+      rowCount: 0,
+      rows: [],
+    });
+
     pgmock.add(query, ["string", "string", "string", "string", "number"], {
       rowCount: 1,
     });
@@ -163,6 +176,28 @@ describe("User Controller", () => {
       },
       (err) => {
         done(err.message);
+      }
+    );
+  });
+
+  it("should give a 404 error if user not found", (done: Done) => {
+    const uc: UserController = new UserController();
+    const pool: Pool = getPool(pgmock);
+
+    pgmock.add('SELECT * FROM "user" WHERE id = $1;', ["number"], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    uc.getUserByID(pool, 1).then(
+      () => {
+        done("Unexpected - should be failing test.");
+      },
+      (err) => {
+        expect(err).to.be.instanceOf(HttpError);
+        expect(err.status).to.be.eql(404);
+        expect(err.message).to.be.eql("No user found with id = 1");
+        done();
       }
     );
   });

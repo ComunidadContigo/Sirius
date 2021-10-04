@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { Pool } from "pg";
+import HttpError from "../../common/models/error.model";
 import HttpResponse from "../../common/models/response.model";
 import UserController from "../controllers/user.controller";
 import User from "../models/user.model";
@@ -27,13 +28,23 @@ export default function UserRouter(): Router {
         res.status(200).send(response);
       },
       (err) => {
-        const response: HttpResponse = {
-          success: false,
-          returnCode: 500,
-          messages: [],
-          errors: [err],
-        };
-        res.status(500).send(response);
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
       }
     );
   });
@@ -54,13 +65,23 @@ export default function UserRouter(): Router {
         res.status(200).send(response);
       },
       (err) => {
-        const response: HttpResponse = {
-          success: false,
-          returnCode: 500,
-          messages: [],
-          errors: [err],
-        };
-        res.status(500).send(response);
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
       }
     );
   });
@@ -81,13 +102,23 @@ export default function UserRouter(): Router {
         res.status(201).send(response);
       },
       (err) => {
-        const response: HttpResponse<User[]> = {
-          success: false,
-          returnCode: 500,
-          messages: [],
-          errors: [err.message, err.stack],
-        };
-        res.status(500).send(response);
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
       }
     );
   });
@@ -108,13 +139,23 @@ export default function UserRouter(): Router {
         res.status(202).send(response);
       },
       (err) => {
-        const response: HttpResponse = {
-          success: false,
-          returnCode: 500,
-          messages: [],
-          errors: [err],
-        };
-        res.status(500).send(response);
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
       }
     );
   });
@@ -134,13 +175,23 @@ export default function UserRouter(): Router {
         res.status(203).send(response);
       },
       (err) => {
-        const response: HttpResponse = {
-          success: false,
-          returnCode: 500,
-          messages: [],
-          errors: [err],
-        };
-        res.status(500).send(response);
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
       }
     );
   });

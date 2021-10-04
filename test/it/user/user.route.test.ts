@@ -15,6 +15,10 @@ describe("User API connection", () => {
   chai.use(chaiHttp);
   const app: Application = UserServer(dbPool);
 
+  beforeEach(() => {
+    pgmock.dropAll();
+  });
+
   it("should successfully connect to API | GET /user", (done: Done) => {
     const user1: User = {
       id: 1,
@@ -103,6 +107,17 @@ describe("User API connection", () => {
       'INSERT INTO "user" (email, password, user_name, phone_number, user_rating) VALUES' +
       "('$1', '$2', '$3', '$4', '$5');";
 
+    // since createUser also queries for taken emails and usernames, we need to add those too
+    pgmock.add("SELECT * FROM \"user\" WHERE email = '$1';", ["string"], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    pgmock.add("SELECT * FROM \"user\" WHERE user_name = '$1';", ["string"], {
+      rowCount: 0,
+      rows: [],
+    });
+
     pgmock.add(query, ["string", "string", "string", "string", "number"], {
       rowCount: 1,
     });
@@ -112,12 +127,11 @@ describe("User API connection", () => {
       .post("/user/")
       .send(user)
       .end((err, res) => {
-        // const resBody: HttpResponse<User> = res.body; //type check
-        // expect(resBody.success).to.be.true;
-        // expect(resBody.returnCode).to.be.eql(201);
-        // expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
-        // expect(resBody.data).to.be.undefined; // this route does not return data
-        console.log(res.body);
+        const resBody: HttpResponse<User> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(201);
+        expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
+        expect(resBody.data).to.be.undefined; // this route does not return data
         done();
       });
   });
@@ -166,6 +180,24 @@ describe("User API connection", () => {
         expect(resBody.returnCode).to.be.eql(203);
         expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
         expect(resBody.data).to.be.undefined; // this route does not return data
+        done();
+      });
+  });
+
+  it("should give an error | GET /user 404", (done: Done) => {
+    pgmock.add('SELECT * FROM "user"', [], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    chai
+      .request(app)
+      .get("/user")
+      .end((err, res) => {
+        const resBody: HttpResponse<User[]> = res.body; //type check
+        expect(resBody.success).to.be.false;
+        expect(resBody.returnCode).to.be.eql(404);
+        expect(resBody.errors[0]).to.be.eql("Database has no users!");
         done();
       });
   });
