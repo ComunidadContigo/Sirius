@@ -85,7 +85,7 @@ export default function UserRouter(): Router {
           success: false,
           returnCode: 500,
           messages: [],
-          errors: [err],
+          errors: [err.message, err.stack],
         };
         res.status(500).send(response);
       }

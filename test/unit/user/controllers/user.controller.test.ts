@@ -18,28 +18,48 @@ describe("User Controller", () => {
 
     const user1: User = {
       id: 1,
+      email: "",
+      password: "",
+      user_name: "",
+      phone_number: "",
+      user_rating: 0,
     };
 
     const user2: User = {
       id: 2,
+      email: "",
+      password: "",
+      user_name: "",
+      phone_number: "",
+      user_rating: 0,
     };
 
     const user3: User = {
       id: 3,
+      email: "",
+      password: "",
+      user_name: "",
+      phone_number: "",
+      user_rating: 0,
     };
 
-    pgmock.add('SELECT * FROM "user";', ["number"], {
+    pgmock.add('SELECT * FROM "user";', [], {
       rowCount: 3,
       rows: [user1, user2, user3],
     });
 
-    uc.getAllUsers(pool).then((users: User[]) => {
-      expect(users).to.have.length(3);
-      expect(users[0]).to.have.property("id", 1);
-      expect(users[1]).to.have.property("id", 2);
-      expect(users[2]).to.have.property("id", 3);
-      done();
-    });
+    uc.getAllUsers(pool).then(
+      (users: User[]) => {
+        expect(users).to.have.length(3);
+        expect(users[0]).to.have.property("id", 1);
+        expect(users[1]).to.have.property("id", 2);
+        expect(users[2]).to.have.property("id", 3);
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
   });
 
   it("should be able to get user by ID", (done: Done) => {
@@ -48,17 +68,27 @@ describe("User Controller", () => {
 
     const user: User = {
       id: 1,
+      email: "",
+      password: "",
+      user_name: "",
+      phone_number: "",
+      user_rating: 0,
     };
 
-    pgmock.add('SELECT * FROM "user" WHERE id = 1;', ["number"], {
+    pgmock.add('SELECT * FROM "user" WHERE id = $1;', ["number"], {
       rowCount: 1,
       rows: [user],
     });
 
-    uc.getUserByID(pool, 1).then((user: User) => {
-      expect(user).to.have.property("id", 1);
-      done();
-    });
+    uc.getUserByID(pool, 1).then(
+      (user: User) => {
+        expect(user).to.have.property("id", 1);
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
   });
 
   it("should be able to create a user", (done: Done) => {
@@ -74,22 +104,23 @@ describe("User Controller", () => {
       user_rating: 0,
     };
 
-    const query = `INSERT INTO "user" 
-      (email, password, user_name, phone_number, user_rating) VALUES 
-      ('${user.email || ""}',
-      '${user.password || ""}', 
-      '${user.user_name || ""}', 
-      '${user.phone_number || ""}', 
-      '${user.user_rating || 0}')`;
+    const query =
+      'INSERT INTO "user" (email, password, user_name, phone_number, user_rating) VALUES' +
+      "('$1', '$2', '$3', '$4', '$5');";
 
-    pgmock.add(query, ["number"], {
+    pgmock.add(query, ["string", "string", "string", "string", "number"], {
       rowCount: 1,
     });
 
-    uc.createUser(pool, user).then((success: boolean) => {
-      expect(success).to.be.true;
-      done();
-    });
+    uc.createUser(pool, user).then(
+      (success: boolean) => {
+        expect(success).to.be.true;
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
   });
 
   it("should be able to edit an existing user", (done: Done) => {
@@ -107,7 +138,7 @@ describe("User Controller", () => {
 
     const query = buildUpdateByIDQuery<User>("user", 1, user);
 
-    pgmock.add(query, ["number"], {
+    pgmock.add(query, [], {
       rowCount: 1,
     });
 
@@ -121,13 +152,18 @@ describe("User Controller", () => {
     const uc: UserController = new UserController();
     const pool: Pool = getPool(pgmock);
 
-    pgmock.add('DELETE FROM "user" WHERE id = 1;', ["number"], {
+    pgmock.add('DELETE FROM "user" WHERE id = $1;', ["number"], {
       rowCount: 1,
     });
 
-    uc.deleteUserByID(pool, 1).then((success: boolean) => {
-      expect(success).to.be.true;
-      done();
-    });
+    uc.deleteUserByID(pool, 1).then(
+      (success: boolean) => {
+        expect(success).to.be.true;
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
   });
 });
