@@ -19,30 +19,48 @@ describe("User Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const user1: User = {
-      id: 1,
+      u_id: 1,
       email: "",
       password: "",
       user_name: "",
       phone_number: "",
-      user_rating: 0,
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "",
     };
 
     const user2: User = {
-      id: 2,
+      u_id: 2,
       email: "",
       password: "",
       user_name: "",
       phone_number: "",
-      user_rating: 0,
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "",
     };
 
     const user3: User = {
-      id: 3,
+      u_id: 3,
       email: "",
       password: "",
       user_name: "",
       phone_number: "",
-      user_rating: 0,
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "",
     };
 
     pgmock.add('SELECT * FROM "user";', [], {
@@ -53,9 +71,9 @@ describe("User Controller", () => {
     uc.getAllUsers(pool).then(
       (users: User[]) => {
         expect(users).to.have.length(3);
-        expect(users[0]).to.have.property("id", 1);
-        expect(users[1]).to.have.property("id", 2);
-        expect(users[2]).to.have.property("id", 3);
+        expect(users[0]).to.have.property("u_id", 1);
+        expect(users[1]).to.have.property("u_id", 2);
+        expect(users[2]).to.have.property("u_id", 3);
         done();
       },
       (err) => {
@@ -69,12 +87,18 @@ describe("User Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const user: User = {
-      id: 1,
+      u_id: 1,
       email: "",
       password: "",
       user_name: "",
       phone_number: "",
-      user_rating: 0,
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "",
     };
 
     pgmock.add('SELECT * FROM "user" WHERE id = $1;', ["number"], {
@@ -84,7 +108,7 @@ describe("User Controller", () => {
 
     uc.getUserByID(pool, 1).then(
       (user: User) => {
-        expect(user).to.have.property("id", 1);
+        expect(user).to.have.property("u_id", 1);
         done();
       },
       (err) => {
@@ -98,17 +122,24 @@ describe("User Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const user: User = {
-      id: 1,
+      u_id: 1,
       email: "test@test.com",
       password: "test",
       user_name: "test",
       phone_number: "test",
-      user_rating: 0,
+      birth_date: "1/1/1970",
+      first_name: "asdf",
+      last_name: "asdf",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "asdf",
     };
 
     const query =
-      'INSERT INTO "user" (email, password, user_name, phone_number, user_rating) VALUES' +
-      "('$1', '$2', '$3', '$4', '$5');";
+      'INSERT INTO "user" ' +
+      "(email, password, user_name, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
+      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9');";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add("SELECT * FROM \"user\" WHERE email = '$1';", ["string"], {
@@ -121,9 +152,23 @@ describe("User Controller", () => {
       rows: [],
     });
 
-    pgmock.add(query, ["string", "string", "string", "string", "number"], {
-      rowCount: 1,
-    });
+    pgmock.add(
+      query,
+      [
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "string",
+        "boolean",
+      ],
+      {
+        rowCount: 1,
+      }
+    );
 
     uc.createUser(pool, user).then(
       (success: boolean) => {
@@ -141,12 +186,18 @@ describe("User Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const user: User = {
-      id: 1,
+      u_id: 1,
       email: "test@test.com",
       password: "test",
       user_name: "test",
       phone_number: "test",
-      user_rating: 0,
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "",
     };
 
     const query = buildUpdateByIDQuery<User>("user", 1, user);

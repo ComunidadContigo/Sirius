@@ -84,14 +84,19 @@ export default class UserController {
       this.saltRounds
     );
     const query =
-      'INSERT INTO "user" (email, password, user_name, phone_number, user_rating) VALUES' +
-      "('$1', '$2', '$3', '$4', '$5');";
+      'INSERT INTO "user" ' +
+      "(email, password, user_name, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
+      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9');";
     const queryResult: QueryResult = await db.query(query, [
       user.email,
       hashedPassword,
       user.user_name,
+      user.first_name,
+      user.last_name,
+      new Date(user.birth_date).toISOString(),
+      user.gender,
       user.phone_number,
-      user.user_rating,
+      user.isVetted || false,
     ]);
     return queryResult.rowCount == 1;
   }

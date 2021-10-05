@@ -1,8 +1,14 @@
 export default interface User {
-  id?: number;
+  u_id?: number;
   email: string;
   password: string;
   user_name: string;
   phone_number: string;
-  user_rating: number;
+  birth_date: string;
+  first_name: string;
+  gender: string;
+  last_name: string;
+  isVetted?: boolean;
+  b_id?: number;
+  r_id?: number;
 }
