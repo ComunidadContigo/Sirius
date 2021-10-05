@@ -1,0 +1,7 @@
+FROM postgres
+WORKDIR /docker-entrypoint-initdb.d
+ADD docker/init.sql /docker-entrypoint-initdb.d
+ENV POSTGRES_USER root
+ENV POSTGRES_PASSWORD root
+ENV POSTGRES_DB sirius_db
+EXPOSE 5432
