@@ -25,7 +25,7 @@ export default function UserRouter(): Router {
           data: users,
           rowCount: users.length,
         };
-        res.status(200).send(response);
+        res.status(response.returnCode).send(response);
       },
       (err) => {
         let response: HttpResponse;
@@ -62,7 +62,7 @@ export default function UserRouter(): Router {
           errors: [],
           data: user,
         };
-        res.status(200).send(response);
+        res.status(response.returnCode).send(response);
       },
       (err) => {
         let response: HttpResponse;
@@ -99,7 +99,7 @@ export default function UserRouter(): Router {
           messages: [],
           errors: [],
         };
-        res.status(201).send(response);
+        res.status(response.returnCode).send(response);
       },
       (err) => {
         let response: HttpResponse;
@@ -136,7 +136,7 @@ export default function UserRouter(): Router {
           messages: [],
           errors: [],
         };
-        res.status(202).send(response);
+        res.status(response.returnCode).send(response);
       },
       (err) => {
         let response: HttpResponse;
@@ -172,7 +172,7 @@ export default function UserRouter(): Router {
           messages: [],
           errors: [],
         };
-        res.status(203).send(response);
+        res.status(response.returnCode).send(response);
       },
       (err) => {
         let response: HttpResponse;

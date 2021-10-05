@@ -7,6 +7,7 @@ dotenv.config();
 export interface Environment {
   dbconf: DBConfig;
   hostconf: HostConfig;
+  secret_key: string;
 }
 
 export interface HostConfig {
@@ -34,6 +35,8 @@ const devConf: Environment = {
     host: process.env.DEV_HOST || "",
     port: Number(process.env.DEV_PORT || ""),
   },
+
+  secret_key: process.env.DEV_SECRETKEY || "fake_secret_key",
 };
 
 const stagingConf: Environment = {
@@ -48,6 +51,8 @@ const stagingConf: Environment = {
     host: process.env.STAGING_HOST || "",
     port: Number(process.env.STAGING_PORT || ""),
   },
+
+  secret_key: process.env.STAGING_SECRETKEY || "fake_secret_key",
 };
 
 const testConf: Environment = {
@@ -62,6 +67,8 @@ const testConf: Environment = {
     host: process.env.TEST_HOST || "",
     port: Number(process.env.TEST_PORT || ""),
   },
+
+  secret_key: process.env.TEST_SECRETKEY || "fake_secret_key",
 };
 
 const prodConf: Environment = {
@@ -76,6 +83,8 @@ const prodConf: Environment = {
     host: process.env.PROD_HOST || "",
     port: Number(process.env.PROD_PORT || ""),
   },
+
+  secret_key: process.env.PROD_SECRETKEY || "fake_secret_key",
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
