@@ -27,3 +27,10 @@ services:
       context: .
     ports:
       - "3004:80"
+  db:
+    container_name: db
+    build:
+      dockerfile: ./docker/Dockerfile.db
+      context: .
+    ports:
+      - "5432:5432"
