@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import bcrypt from "bcrypt";
-import { buildUpdateByIDQuery } from "../../common/tools/queryBuilder";
+import { buildUserUpdateByIDQuery } from "../../common/tools/queryBuilder";
 import User from "../models/user.model";
 import HttpError from "../../common/models/error.model";
 
@@ -37,7 +37,7 @@ export default class UserController {
   }
 
   public async getUserByID(db: Pool, id: number): Promise<User> {
-    const query = 'SELECT * FROM "user" WHERE id = $1;';
+    const query = 'SELECT * FROM "user" WHERE u_id = $1;';
     const queryResult: QueryResult<User> = await db.query(query, [id]);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No user found with id = ${id}`);
@@ -106,13 +106,13 @@ export default class UserController {
     id: number,
     user: User
   ): Promise<boolean> {
-    const query = buildUpdateByIDQuery<User>("user", id, user);
+    const query = buildUserUpdateByIDQuery<User>("user", id, user);
     const queryResult: QueryResult = await db.query(query);
     return queryResult.rowCount === 1;
   }
 
   public async deleteUserByID(db: Pool, id: number): Promise<boolean> {
-    const query = `DELETE FROM "user" WHERE id = $1;`;
+    const query = `DELETE FROM "user" WHERE u_id = $1;`;
     const queryResult: QueryResult = await db.query(query, [id]);
     return queryResult.rowCount === 1;
   }

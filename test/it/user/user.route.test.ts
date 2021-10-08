@@ -7,7 +7,7 @@ import chaiHttp from "chai-http";
 import { Application } from "express";
 import User from "../../../src/user/models/user.model";
 import HttpResponse from "../../../src/common/models/response.model";
-import { buildUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
+import { buildUserUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
 
 describe("User API connection", () => {
   const pgmock: PGMock2 = new PGMock2();
@@ -87,7 +87,7 @@ describe("User API connection", () => {
       last_name: "",
     };
 
-    pgmock.add('SELECT * FROM "user" WHERE id = $1;', ["number"], {
+    pgmock.add('SELECT * FROM "user" WHERE u_id = $1;', ["number"], {
       rowCount: 1,
       rows: [user],
     });
@@ -179,7 +179,7 @@ describe("User API connection", () => {
       last_name: "",
     };
 
-    const query = buildUpdateByIDQuery<User>("user", 1, user);
+    const query = buildUserUpdateByIDQuery<User>("user", 1, user);
 
     pgmock.add(query, ["number"], {
       rowCount: 1,
@@ -200,7 +200,7 @@ describe("User API connection", () => {
   });
 
   it("should successfully connect to API | DELETE /user/:id", (done: Done) => {
-    pgmock.add('DELETE FROM "user" WHERE id = $1;', ["number"], {
+    pgmock.add('DELETE FROM "user" WHERE u_id = $1;', ["number"], {
       rowCount: 1,
     });
 

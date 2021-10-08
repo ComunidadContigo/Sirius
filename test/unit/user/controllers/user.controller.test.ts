@@ -4,7 +4,7 @@ import PGMock2, { getPool } from "pgmock2";
 import { Pool } from "pg";
 import UserController from "../../../../src/user/controllers/user.controller";
 import User from "../../../../src/user/models/user.model";
-import { buildUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
+import { buildUserUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
 import HttpError from "../../../../src/common/models/error.model";
 
 describe("User Controller", () => {
@@ -101,7 +101,7 @@ describe("User Controller", () => {
       gender: "",
     };
 
-    pgmock.add('SELECT * FROM "user" WHERE id = $1;', ["number"], {
+    pgmock.add('SELECT * FROM "user" WHERE u_id = $1;', ["number"], {
       rowCount: 1,
       rows: [user],
     });
@@ -200,7 +200,7 @@ describe("User Controller", () => {
       gender: "",
     };
 
-    const query = buildUpdateByIDQuery<User>("user", 1, user);
+    const query = buildUserUpdateByIDQuery<User>("user", 1, user);
 
     pgmock.add(query, [], {
       rowCount: 1,
@@ -216,7 +216,7 @@ describe("User Controller", () => {
     const uc: UserController = new UserController();
     const pool: Pool = getPool(pgmock);
 
-    pgmock.add('DELETE FROM "user" WHERE id = $1;', ["number"], {
+    pgmock.add('DELETE FROM "user" WHERE u_id = $1;', ["number"], {
       rowCount: 1,
     });
 
@@ -235,7 +235,7 @@ describe("User Controller", () => {
     const uc: UserController = new UserController();
     const pool: Pool = getPool(pgmock);
 
-    pgmock.add('SELECT * FROM "user" WHERE id = $1;', ["number"], {
+    pgmock.add('SELECT * FROM "user" WHERE u_id = $1;', ["number"], {
       rowCount: 0,
       rows: [],
     });
