@@ -1,6 +1,6 @@
 import { createServer, Server } from "http";
 import { Server as IOServer, Socket } from "socket.io";
-import environmentConfig from "@common/config/environment.config";
+import environmentConfig from "../common/config/environment.config";
 import { Pool } from "pg";
 
 export default function RealTimeServer(): Server {

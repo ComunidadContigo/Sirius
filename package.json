@@ -46,8 +46,8 @@
     "dev-user": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/user/main.js\"",
     "dev-buddy": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/buddy/main.js\"",
     "dev-realtime": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/real_time/main.js\"",
-    "test": "cross-env NODE_ENV=development mocha -r ts-node/register -r tsconfig-paths/register --exit 'test/**/*.test.ts'",
-    "test:ci": "cross-env NODE_ENV=development mocha -r ts-node/register -r tsconfig-paths/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
+    "test": "cross-env NODE_ENV=development mocha -r ts-node/register --exit 'test/**/*.test.ts'",
+    "test:ci": "cross-env NODE_ENV=development mocha -r ts-node/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts"
   },
   "repository": {

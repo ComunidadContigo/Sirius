@@ -1,8 +1,8 @@
 import { Pool } from "pg";
-import User from "@user/models/user.model";
-import UserController from "@user/controllers/user.controller";
+import User from "../../user/models/user.model";
+import UserController from "../../user/controllers/user.controller";
 import bcrypt from "bcrypt";
-import HttpError from "@common/models/error.model";
+import HttpError from "../../common/models/error.model";
 
 export default class AuthController {
   public async authenticate(

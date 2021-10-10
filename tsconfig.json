@@ -64,16 +64,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"],
-      "@src/*": ["src/*"],
-      "@user/*": ["src/user/*"],
-      "@buddy/*": ["src/buddy/*"],
-      "@real_time/*": ["src/real_time/*"],
-      "@auth/*": ["src/auth/*"],
-      "@common/*": ["src/common/*"]
-    }
+    "baseUrl": "./"
   },
   "include": ["src/**/*"]
 }
