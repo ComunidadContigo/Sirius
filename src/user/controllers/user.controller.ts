@@ -7,14 +7,6 @@ import HttpError from "../../common/models/error.model";
 export default class UserController {
   private saltRounds = 10;
 
-  public async getUserByUsername(db: Pool, user_name: string): Promise<User> {
-    const query = "SELECT * FROM \"user\" WHERE user_name = '$1';";
-    const queryResult: QueryResult<User> = await db.query(query, [user_name]);
-    if (queryResult.rowCount == 0)
-      throw new HttpError(404, `No user found with user name = ${user_name}`);
-    return queryResult.rows[0];
-  }
-
   public async getUserByEmail(db: Pool, email: string): Promise<User> {
     const query = "SELECT * FROM \"user\" WHERE email = '$1';";
     const queryResult: QueryResult<User> = await db.query(query, [email]);
@@ -46,9 +38,8 @@ export default class UserController {
 
   public async createUser(db: Pool, user: User): Promise<boolean> {
     // try to find if a user already exists
-    let foundUsername = true;
-    let foundEmail = true;
 
+    let foundEmail = true;
     try {
       await this.getUserByEmail(db, user.email);
     } catch (e) {
@@ -58,22 +49,7 @@ export default class UserController {
         throw e;
       }
     }
-
-    try {
-      await this.getUserByUsername(db, user.email);
-    } catch (e) {
-      if (e instanceof HttpError && e.status == 404) {
-        foundUsername = false;
-      } else {
-        throw e;
-      }
-    }
-
-    if (foundEmail && foundUsername) {
-      throw new HttpError(403, "Email and username already taken!");
-    } else if (foundUsername) {
-      throw new HttpError(403, "Username already taken!");
-    } else if (foundEmail) {
+    if (foundEmail) {
       throw new HttpError(403, "Email already taken!");
     }
 
@@ -85,12 +61,11 @@ export default class UserController {
     );
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, user_name, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
-      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9');";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
+      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8');";
     const queryResult: QueryResult = await db.query(query, [
       user.email,
       hashedPassword,
-      user.user_name,
       user.first_name,
       user.last_name,
       new Date(user.birth_date).toISOString(),
@@ -108,12 +83,16 @@ export default class UserController {
   ): Promise<boolean> {
     const query = buildUserUpdateByIDQuery<User>("user", id, user);
     const queryResult: QueryResult = await db.query(query);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No user found with id = ${id}`);
     return queryResult.rowCount === 1;
   }
 
   public async deleteUserByID(db: Pool, id: number): Promise<boolean> {
     const query = `DELETE FROM "user" WHERE u_id = $1;`;
     const queryResult: QueryResult = await db.query(query, [id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No user found with id = ${id}`);
     return queryResult.rowCount === 1;
   }
 }

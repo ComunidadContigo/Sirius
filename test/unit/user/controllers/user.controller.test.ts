@@ -22,7 +22,6 @@ describe("User Controller", () => {
       u_id: 1,
       email: "",
       password: "",
-      user_name: "",
       phone_number: "",
       birth_date: "1/1/1970",
       first_name: "",
@@ -37,7 +36,6 @@ describe("User Controller", () => {
       u_id: 2,
       email: "",
       password: "",
-      user_name: "",
       phone_number: "",
       birth_date: "1/1/1970",
       first_name: "",
@@ -52,7 +50,6 @@ describe("User Controller", () => {
       u_id: 3,
       email: "",
       password: "",
-      user_name: "",
       phone_number: "",
       birth_date: "1/1/1970",
       first_name: "",
@@ -90,7 +87,6 @@ describe("User Controller", () => {
       u_id: 1,
       email: "",
       password: "",
-      user_name: "",
       phone_number: "",
       birth_date: "1/1/1970",
       first_name: "",
@@ -125,7 +121,6 @@ describe("User Controller", () => {
       u_id: 1,
       email: "test@test.com",
       password: "test",
-      user_name: "test",
       phone_number: "test",
       birth_date: "1/1/1970",
       first_name: "asdf",
@@ -138,8 +133,8 @@ describe("User Controller", () => {
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, user_name, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
-      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9');";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
+      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8');";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add("SELECT * FROM \"user\" WHERE email = '$1';", ["string"], {
@@ -155,7 +150,6 @@ describe("User Controller", () => {
     pgmock.add(
       query,
       [
-        "string",
         "string",
         "string",
         "string",
@@ -189,7 +183,6 @@ describe("User Controller", () => {
       u_id: 1,
       email: "test@test.com",
       password: "test",
-      user_name: "test",
       phone_number: "test",
       birth_date: "1/1/1970",
       first_name: "",

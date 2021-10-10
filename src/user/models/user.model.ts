@@ -2,7 +2,6 @@ export default interface User {
   u_id?: number;
   email: string;
   password: string;
-  user_name: string;
   phone_number: string;
   birth_date: string;
   first_name: string;

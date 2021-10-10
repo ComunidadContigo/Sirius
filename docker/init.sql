@@ -85,7 +85,7 @@ CREATE TABLE refreshtoken
   FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );
 
-insert into "user" (email, password, user_name, phone_number, birth_date, first_name, last_name, gender, isVetted) values ('mwillavize0@sina.com.cn', 'ujCkcK64v4D', 'mwillavize0', '665-321-2366', '05/22/2021', 'Michaeline', 'Willavize', 'Polygender', false);
+insert into "user" (email, password, user_name, phone_number, birth_date, first_name, last_name, gender, isVetted) values ('mwillavize0@sina.com', 'ujCkcK64v4D', 'mwillavize0', '665-321-2366', '05/22/2021', 'Michaeline', 'Willavize', 'Polygender', false);
 insert into "user" (email, password, user_name, phone_number, birth_date, first_name, last_name, gender, isVetted) values ('lstewartson1@mayoclinic.com', 'BAoPNZ', 'lstewartson1', '581-417-7720', '10/21/2020', 'Letitia', 'Stewartson', 'Bigender', false);
 insert into "user" (email, password, user_name, phone_number, birth_date, first_name, last_name, gender, isVetted) values ('rtravers2@istockphoto.com', 'lmCRTfNm', 'rtravers2', '958-535-8016', '01/27/2021', 'Ric', 'Travers', 'Genderfluid', false);
 insert into "user" (email, password, user_name, phone_number, birth_date, first_name, last_name, gender, isVetted) values ('mseleway3@unicef.org', '7qpqO1', 'mseleway3', '428-518-6040', '06/10/2021', 'Melonie', 'Seleway', 'Agender', true);

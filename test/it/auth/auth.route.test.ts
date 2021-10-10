@@ -18,7 +18,6 @@ describe("Auth API Connection", () => {
     const person: User = {
       email: "test@test.test",
       password: bcrypt.hashSync("test", 10),
-      user_name: "HarryPotter",
       phone_number: "4206666969",
       birth_date: "10/10/1998",
       first_name: "Clifford",
