@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import api_router from "./routes/router";
-import environmentConfig from "../common/config/environment.config";
+import environmentConfig from "@common/config/environment.config";
 import { Pool } from "pg";
 
 export default function BuddyServer(): express.Application {

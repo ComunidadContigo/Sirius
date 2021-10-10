@@ -1,7 +1,5 @@
 import AuthServer from "./api";
-import environmentConfig, {
-  DBConfig,
-} from "../common/config/environment.config";
+import environmentConfig, { DBConfig } from "@common/config/environment.config";
 import { Pool } from "pg";
 
 const dbConfig: DBConfig = environmentConfig.dbconfig;

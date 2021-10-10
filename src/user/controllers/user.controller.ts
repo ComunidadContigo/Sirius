@@ -1,8 +1,8 @@
 import { Pool, QueryResult } from "pg";
 import bcrypt from "bcrypt";
-import { buildUserUpdateByIDQuery } from "../../common/tools/queryBuilder";
-import User from "../models/user.model";
-import HttpError from "../../common/models/error.model";
+import { buildUserUpdateByIDQuery } from "@common/tools/queryBuilder";
+import User from "@user/models/user.model";
+import HttpError from "@common/models/error.model";
 
 export default class UserController {
   private saltRounds = 10;
