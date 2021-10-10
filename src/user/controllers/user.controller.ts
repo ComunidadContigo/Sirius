@@ -8,7 +8,7 @@ export default class UserController {
   private saltRounds = 10;
 
   public async getUserByEmail(db: Pool, email: string): Promise<User> {
-    const query = "SELECT * FROM \"user\" WHERE email = '$1';";
+    const query = 'SELECT * FROM "user" WHERE email = $1;';
     const queryResult: QueryResult<User> = await db.query(query, [email]);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No user found with email = ${email}`);
@@ -37,7 +37,7 @@ export default class UserController {
   }
 
   public async createUser(db: Pool, user: User): Promise<boolean> {
-    // try to find if a user already exists
+    // try to find if a user already exist
 
     let foundEmail = true;
     try {
@@ -62,7 +62,7 @@ export default class UserController {
     const query =
       'INSERT INTO "user" ' +
       "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
-      "VALUES ('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8');";
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
     const queryResult: QueryResult = await db.query(query, [
       user.email,
       hashedPassword,
