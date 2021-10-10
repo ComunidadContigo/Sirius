@@ -1,3 +1,5 @@
+version: "3.2"
+
 services:
   auth:
     container_name: auth_service
@@ -5,8 +7,8 @@ services:
       dockerfile: ./docker/Dockerfile.auth
       context: .
     environment:
-      - HOST=auth
-      - DBURL=db
+      - "HOST=auth"
+      - "DBURL=db"
     ports:
       - "3001:80"
 
@@ -16,8 +18,8 @@ services:
       dockerfile: ./docker/Dockerfile.buddy
       context: .
     environment:
-      - HOST=buddy
-      - DBURL=db
+      - "HOST=buddy"
+      - "DBURL=db"
     ports:
       - "3002:80"
 
@@ -27,8 +29,8 @@ services:
       dockerfile: ./docker/Dockerfile.user
       context: .
     environment:
-      - HOST=user
-      - DBURL=db
+      - "HOST=user"
+      - "DBURL=db"
     ports:
       - "3003:80"
 
@@ -38,8 +40,8 @@ services:
       dockerfile: ./docker/Dockerfile.realtime
       context: .
     environment:
-      - HOST=real_time
-      - DBURL=db
+      - "HOST=real_time"
+      - "DBURL=db"
     ports:
       - "3004:80"
 
