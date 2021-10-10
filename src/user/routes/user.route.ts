@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 import { Pool } from "pg";
-import HttpError from "../../common/models/error.model";
-import HttpResponse from "../../common/models/response.model";
-import UserController from "../controllers/user.controller";
-import User from "../models/user.model";
+import HttpError from "@common/models/error.model";
+import HttpResponse from "@common/models/response.model";
+import UserController from "@user/controllers/user.controller";
+import User from "@user/models/user.model";
 
 export default function UserRouter(): Router {
   const userController: UserController = new UserController();
