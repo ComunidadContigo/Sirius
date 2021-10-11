@@ -19,12 +19,12 @@ describe("Auth API Connection", () => {
       email: "test@test.test",
       password: bcrypt.hashSync("test", 10),
       phone_number: "4206666969",
-      birth_date: "10/10/1998",
       first_name: "Clifford",
       gender: "Male",
       last_name: "Perro Grande",
+      birth_date: "1/1/1970",
     };
-    pgmock.add("SELECT * FROM \"user\" WHERE email = '$1';", ["string"], {
+    pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
       rowCount: 1,
       rows: [person],
     });
