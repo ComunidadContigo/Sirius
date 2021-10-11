@@ -4,6 +4,7 @@ import HttpError from "../../common/models/error.model";
 import HttpResponse from "../../common/models/response.model";
 import UserController from "../controllers/user.controller";
 import User from "../models/user.model";
+import AuthMiddleware from "../../common/middleware/auth.middleware";
 
 export default function UserRouter(): Router {
   const userController: UserController = new UserController();
@@ -12,7 +13,7 @@ export default function UserRouter(): Router {
   // Get All Users
   // GET /user
   // Optional Body = { limit: number } to limit the results.
-  router.get("/", (req: Request, res: Response) => {
+  router.get("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     // TODO add functionality to handle LIMIT.
     userController.getAllUsers(db).then(
@@ -51,7 +52,7 @@ export default function UserRouter(): Router {
 
   // Get User by ID
   // GET /user/:id
-  router.get("/:id", (req: Request, res: Response) => {
+  router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.getUserByID(db, +req.params.id).then(
       (user: User) => {
@@ -126,7 +127,7 @@ export default function UserRouter(): Router {
   // Update User By ID
   // PUT /user/:id
   // Body should match the user model.
-  router.put("/:id", (req: Request, res: Response) => {
+  router.put("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.updateUserByID(db, +req.params.id, req.body as User).then(
       (success: boolean) => {
@@ -162,7 +163,7 @@ export default function UserRouter(): Router {
 
   // Delete User By ID
   // DELETE /user/:id
-  router.delete("/:id", (req: Request, res: Response) => {
+  router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.deleteUserByID(db, +req.params.id).then(
       (success: boolean) => {

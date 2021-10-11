@@ -1,22 +1,73 @@
-import { Pool } from "pg";
-import User from "../../user/models/user.model";
+import { Pool, QueryResult } from "pg";
 import UserController from "../../user/controllers/user.controller";
 import bcrypt from "bcrypt";
 import HttpError from "../../common/models/error.model";
+import jwt from "jsonwebtoken";
+import environmentConfig from "../../common/config/environment.config";
+import { RefreshToken, RefreshTokenPayload } from "../models/auth.model";
+import User from "src/user/models/user.model";
 
 export default class AuthController {
-  public async authenticate(
+  public async login(
     db: Pool,
     email: string,
     password: string
-  ): Promise<User> {
+  ): Promise<RefreshToken> {
     const uc: UserController = new UserController();
-    const user = await uc.getUserByEmail(db, email);
+    const user: User = await uc.getUserByEmail(db, email);
     const verifyPassword = await bcrypt.compare(password, user.password);
     if (verifyPassword) {
-      return user;
+      const payload: RefreshTokenPayload = {
+        u_id: user.u_id!,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        isVetted: false,
+        b_id: 0,
+        r_id: 0,
+      };
+      const token = jwt.sign(payload, environmentConfig.secret_key, {
+        expiresIn: "1y",
+      });
+
+      const query = "INSERT INTO refreshtoken (u_id, token) VALUES ($1, $2)";
+      const queryResult: QueryResult = await db.query(query, [
+        user.u_id,
+        token,
+      ]);
+      if (queryResult.rowCount < 1) {
+        throw new HttpError(
+          500,
+          "Something went wrong inserting refresh token into DB"
+        );
+      }
+      return {
+        u_id: user.u_id!,
+        token: token,
+      };
     } else {
       throw new HttpError(401, "Wrong Credentials!");
     }
+  }
+
+  public async authenticate(db: Pool, token: RefreshToken): Promise<string> {
+    const query = `SELECT * FROM refreshtoken WHERE token = '${token.token}'`;
+    const queryResult: QueryResult<RefreshToken> = await db.query(query);
+    if (
+      queryResult.rowCount < 1 ||
+      !jwt.verify(token.token, environmentConfig.secret_key)
+    )
+      throw new HttpError(401, `Could not authenticate user ${token.u_id}`);
+    return jwt.sign({ message: "Verified!" }, environmentConfig.secret_key, {
+      expiresIn: "15s",
+    });
+  }
+
+  public async logout(db: Pool, id: number): Promise<boolean> {
+    const query = `DELETE FROM refreshtoken WHERE u_id = ${id}`;
+    const queryResult: QueryResult = await db.query(query);
+    if (queryResult.rowCount < 1)
+      throw new HttpError(404, `No refresh token found with u_id = ${id}`);
+    return true;
   }
 }

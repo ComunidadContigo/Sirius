@@ -79,6 +79,5 @@ CREATE TABLE refreshtoken
 (
   token VARCHAR(512) NOT NULL,
   u_id INT NOT NULL,
-  PRIMARY KEY (u_id),
   FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );

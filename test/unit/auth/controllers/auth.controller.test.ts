@@ -5,6 +5,12 @@ import bcrypt from "bcrypt";
 import { Pool } from "pg";
 import AuthController from "../../../../src/auth/controllers/auth.controller";
 import { expect } from "chai";
+import {
+  RefreshToken,
+  RefreshTokenPayload,
+} from "../../../../src/auth/models/auth.model";
+import jwt from "jsonwebtoken";
+import environment from "../../../../src/common/config/environment.config";
 
 describe("Auth Controller", () => {
   let pgmock: PGMock2;
@@ -13,10 +19,11 @@ describe("Auth Controller", () => {
     pgmock.dropAll();
   });
 
-  it("should authenticate user credentials", (done: Done) => {
+  it("should login with correct user credentials", (done: Done) => {
     const dbPool: Pool = getPool(pgmock);
     const ac: AuthController = new AuthController();
     const person: User = {
+      u_id: 1,
       email: "test@test.test",
       password: bcrypt.hashSync("test", 10),
       phone_number: "4206666969",
@@ -29,10 +36,24 @@ describe("Auth Controller", () => {
       rowCount: 1,
       rows: [person],
     });
-    ac.authenticate(dbPool, "test@test.test", "test").then(
-      (user: User) => {
-        //behavior driven testing "I am manifesting that what I give it is true."
-        expect(user).to.be.equal(person);
+    pgmock.add(
+      "INSERT INTO refreshtoken (u_id, token) VALUES ($1, $2)",
+      ["number", "string"],
+      {
+        rowCount: 1,
+      }
+    );
+    ac.login(dbPool, "test@test.test", "test").then(
+      (token: RefreshToken) => {
+        const data = jwt.verify(
+          token.token,
+          environment.secret_key
+        ) as RefreshTokenPayload;
+        expect(data.u_id).to.eql(person.u_id);
+        expect(data.email).to.eql(person.email);
+        expect(data.first_name).to.eql(person.first_name);
+        expect(data.last_name).to.eql(person.last_name);
+        expect(data.isVetted).to.be.false;
         done();
       },
       (err) => {
