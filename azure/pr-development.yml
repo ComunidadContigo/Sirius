@@ -16,6 +16,9 @@ steps:
       npm install
       npm run test:ci
     displayName: "npm install and test"
+    env:
+      SECRETKEY_REFRESH: $(secret_key_refresh)
+      SECRETKEY_ACCESS: $(secret_key_access)
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
