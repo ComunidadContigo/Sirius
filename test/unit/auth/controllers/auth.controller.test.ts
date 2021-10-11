@@ -31,6 +31,9 @@ describe("Auth Controller", () => {
       gender: "Male",
       last_name: "Perro Grande",
       birth_date: "1/1/1970",
+      isVetted: false,
+      b_id: 0,
+      r_id: 0,
     };
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
       rowCount: 1,
@@ -47,13 +50,15 @@ describe("Auth Controller", () => {
       (token: RefreshToken) => {
         const data = jwt.verify(
           token.token,
-          environment.secret_key
+          environment.secret_key_refresh
         ) as RefreshTokenPayload;
         expect(data.u_id).to.eql(person.u_id);
         expect(data.email).to.eql(person.email);
         expect(data.first_name).to.eql(person.first_name);
         expect(data.last_name).to.eql(person.last_name);
-        expect(data.isVetted).to.be.false;
+        expect(data.isVetted).to.be.eql(person.isVetted);
+        expect(data.b_id).to.be.eql(person.b_id);
+        expect(data.r_id).to.be.eql(person.r_id);
         done();
       },
       (err) => {

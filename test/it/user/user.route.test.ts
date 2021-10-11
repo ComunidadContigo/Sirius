@@ -8,12 +8,19 @@ import { Application } from "express";
 import User from "../../../src/user/models/user.model";
 import HttpResponse from "../../../src/common/models/response.model";
 import { buildUserUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
+import jwt from "jsonwebtoken";
+import environment from "../../../src/common/config/environment.config";
 
 describe("User API connection", () => {
   const pgmock: PGMock2 = new PGMock2();
   const dbPool: Pool = getPool(pgmock);
   chai.use(chaiHttp);
   const app: Application = UserServer(dbPool);
+
+  const accessToken = jwt.sign(
+    { message: "Verified!" },
+    environment.secret_key_access
+  );
 
   beforeEach(() => {
     pgmock.dropAll();
@@ -61,7 +68,9 @@ describe("User API connection", () => {
     chai
       .request(app)
       .get("/user")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
+        if (err) done(err);
         const resBody: HttpResponse<User[]> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(200);
@@ -91,7 +100,9 @@ describe("User API connection", () => {
     chai
       .request(app)
       .get("/user/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
+        if (err) done(err);
         const resBody: HttpResponse<User> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(200);
@@ -177,7 +188,9 @@ describe("User API connection", () => {
       .request(app)
       .put("/user/1")
       .send(user)
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
+        if (err) done(err);
         const resBody: HttpResponse<User> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(202);
@@ -195,7 +208,9 @@ describe("User API connection", () => {
     chai
       .request(app)
       .delete("/user/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
+        if (err) done(err);
         const resBody: HttpResponse<User> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(203);
@@ -214,7 +229,9 @@ describe("User API connection", () => {
     chai
       .request(app)
       .get("/user")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
+        if (err) done(err);
         const resBody: HttpResponse<User[]> = res.body; //type check
         expect(resBody.success).to.be.false;
         expect(resBody.returnCode).to.be.eql(404);
