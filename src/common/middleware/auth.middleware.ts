@@ -5,6 +5,7 @@ import HttpResponse from "../models/response.model";
 
 export default function (req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers["authorization"];
+  // TODO: Check if Authorization header is of type Bearer, handle Basic auth differently
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) {
     const response: HttpResponse = {
@@ -16,7 +17,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
     return res.status(response.returnCode).send(response);
   }
 
-  jwt.verify(token, environmentConfig.secret_key, (err) => {
+  jwt.verify(token, environmentConfig.secret_key_access, (err) => {
     if (err) {
       const response: HttpResponse = {
         success: false,

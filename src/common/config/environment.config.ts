@@ -5,7 +5,8 @@ require("dotenv").config();
 export interface Environment {
   dbconfig: DBConfig;
   hostconf: HostConfig;
-  secret_key: string;
+  secret_key_refresh: string;
+  secret_key_access: string;
 }
 
 export interface HostConfig {
@@ -35,7 +36,8 @@ const environment: Environment = {
     port: Number(process.env.PORT!),
   },
 
-  secret_key: process.env.SECRETKEY || "fake_secret_key",
+  secret_key_refresh: process.env.SECRETKEY_REFRESH!,
+  secret_key_access: process.env.SECRETKEY_ACCESS!,
 };
 
 export default environment;

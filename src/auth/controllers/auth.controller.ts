@@ -22,11 +22,11 @@ export default class AuthController {
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        isVetted: false,
-        b_id: 0,
-        r_id: 0,
+        isVetted: user.isVetted!,
+        b_id: user.b_id!,
+        r_id: user.r_id!,
       };
-      const token = jwt.sign(payload, environmentConfig.secret_key, {
+      const token = jwt.sign(payload, environmentConfig.secret_key_refresh, {
         expiresIn: "1y",
       });
 
@@ -55,12 +55,16 @@ export default class AuthController {
     const queryResult: QueryResult<RefreshToken> = await db.query(query);
     if (
       queryResult.rowCount < 1 ||
-      !jwt.verify(token.token, environmentConfig.secret_key)
+      !jwt.verify(token.token, environmentConfig.secret_key_refresh)
     )
       throw new HttpError(401, `Could not authenticate user ${token.u_id}`);
-    return jwt.sign({ message: "Verified!" }, environmentConfig.secret_key, {
-      expiresIn: "15s",
-    });
+    return jwt.sign(
+      { message: "Verified!" },
+      environmentConfig.secret_key_access,
+      {
+        expiresIn: "15s",
+      }
+    );
   }
 
   public async logout(db: Pool, id: number): Promise<boolean> {
