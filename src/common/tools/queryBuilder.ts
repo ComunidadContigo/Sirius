@@ -1,4 +1,4 @@
-export function buildUpdateByIDQuery<E>(
+export function buildUserUpdateByIDQuery<E>(
   table: string,
   id: number,
   dataToUpdate: E
@@ -12,6 +12,6 @@ export function buildUpdateByIDQuery<E>(
     query += columnsToUpdate[i] + ", ";
   }
   query += columnsToUpdate[i];
-  query += ` WHERE id = ${id}`;
+  query += ` WHERE u_id = ${id}`;
   return query;
 }

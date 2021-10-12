@@ -4,18 +4,22 @@
   "description": "",
   "main": "index.ts",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
     "pg-pool": "^3.2.2",
     "socket.io": "^4.2.0",
     "typescript": "^4.2.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/chai": "^4.2.21",
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/mocha": "^9.0.0",
     "@types/pg": "^7.14.11",
     "@types/pg-pool": "^2.0.2",
@@ -42,7 +46,7 @@
     "dev-user": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/user/main.js\"",
     "dev-buddy": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/buddy/main.js\"",
     "dev-realtime": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/real_time/main.js\"",
-    "test": "cross-env NODE_ENV=development mocha -r ts-node/register --exit 'test/**/*.test.ts'",
+    "test": "cross-env NODE_ENV=development mocha -r ts-node/register --watch-extensions ts --watch --watch-files src/**/*,test/**/* 'test/**/*.test.ts'",
     "test:ci": "cross-env NODE_ENV=development mocha -r ts-node/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts"
   },

@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import api_router from "./routes/router";
-import environmentConfig from "../../src/common/config/environment.config";
+import environmentConfig from "../common/config/environment.config";
 import { Pool } from "pg";
 
 export default function BuddyServer(): express.Application {
@@ -9,7 +9,7 @@ export default function BuddyServer(): express.Application {
 
   // set up DB connection
   // set up DB connection
-  const pool: Pool = new Pool(environmentConfig.dbconf);
+  const pool: Pool = new Pool(environmentConfig.dbconfig);
   app.set("dbPool", pool);
 
   // add middleware
