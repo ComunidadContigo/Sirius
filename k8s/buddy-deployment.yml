@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sirius-buddy
+  labels:
+    app: sirius-buddy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sirius-buddy
+  template:
+    metadata:
+      labels:
+        app: sirius-buddy
+    spec:
+      containers:
+        - name: sirius-buddy-service
+          image: "gabgcdev/contigocommunity:sirius_buddy_service"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DBUSER
+              value: root
+            - name: DBPASS
+              value: root
+            - name: DBURL
+              value: localhost
+            - name: DBPORT
+              value: "5432"
+            - name: DBNAME
+              value: sirius_db
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: localhost
+            - name: SECRETKEY_REFRESH
+              value: fake_refresh_key
+            - name: SECRETKEY_ACCESS
+              value: fake_access_key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sirius-buddy-service
+spec:
+  selector:
+    app: sirius-buddy
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30003
