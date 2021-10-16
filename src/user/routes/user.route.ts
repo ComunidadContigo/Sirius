@@ -161,6 +161,43 @@ export default function UserRouter(): Router {
     );
   });
 
+  // Update User Location By ID
+  // PUT /user/location/:id
+  // Body should match the user model.
+  router.put("/location/:id", (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    userController.updateUserByID(db, +req.params.id, req.body as User).then(
+      (success: boolean) => {
+        const response: HttpResponse = {
+          success: success,
+          returnCode: 202,
+          messages: [],
+          errors: [],
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
   // Delete User By ID
   // DELETE /user/:id
   router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {

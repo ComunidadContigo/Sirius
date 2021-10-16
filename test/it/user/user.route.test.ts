@@ -36,6 +36,8 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      longitude: "",
+      latitude: "",
     };
 
     const user2: User = {
@@ -47,6 +49,8 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      longitude: "",
+      latitude: "",
     };
 
     const user3: User = {
@@ -58,6 +62,8 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      longitude: "",
+      latitude: "",
     };
 
     pgmock.add('SELECT * FROM "user";', [], {
@@ -90,6 +96,8 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      longitude: "",
+      latitude: "",
     };
 
     pgmock.add('SELECT * FROM "user" WHERE u_id = $1;', ["number"], {
@@ -122,12 +130,14 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      longitude: "",
+      latitude: "",
     };
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
-      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number, longitude, latitude, isVetted) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
@@ -138,6 +148,8 @@ describe("User API connection", () => {
     pgmock.add(
       query,
       [
+        "string",
+        "string",
         "string",
         "string",
         "string",
@@ -166,7 +178,7 @@ describe("User API connection", () => {
       });
   });
 
-  it("should successfully connect to API | PUT /user/:id", (done: Done) => {
+  it("should successfully connect to API | PUT /user/location/:id", (done: Done) => {
     const user: User = {
       u_id: 1,
       email: "test@test.com",
@@ -176,6 +188,8 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      longitude: "0.000000",
+      latitude: "0.000000",
     };
 
     const query = buildUserUpdateByIDQuery<User>("user", 1, user);
@@ -186,7 +200,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .put("/user/1")
+      .put("/user/location/1")
       .send(user)
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {

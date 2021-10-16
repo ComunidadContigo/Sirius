@@ -66,6 +66,8 @@ CREATE TABLE "user"
   last_name VARCHAR(25) NOT NULL,
   gender VARCHAR(30) NOT NULL,
   u_id SERIAL PRIMARY KEY,
+  longitude VARCHAR(25) NOT NULL,
+  latitude VARCHAR(25) NOT NULL,
   isVetted BOOLEAN NOT NULL,
   b_id INT,
   r_id INT,
@@ -74,6 +76,7 @@ CREATE TABLE "user"
   UNIQUE (email),
   UNIQUE (phone_number)
 );
+
 
 CREATE TABLE refreshtoken
 (
