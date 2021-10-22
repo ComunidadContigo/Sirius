@@ -8,7 +8,8 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - http:
+    - host: gabgc.cloud.okteto.net
+      http:
         paths:
           - path: /user($|/)(.*)
             pathType: Prefix
