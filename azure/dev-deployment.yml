@@ -41,6 +41,7 @@ steps:
       repository: 'sirius-auth'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.auth'
+      buildContext: '$(Build.SourcesDirectory)'
   
   - task: Docker@2
     inputs:
@@ -48,6 +49,7 @@ steps:
       repository: 'sirius-buddy'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.buddy'
+      buildContext: '$(Build.SourcesDirectory)'
 
   - task: Docker@2
     inputs:
@@ -55,6 +57,7 @@ steps:
       repository: 'sirius-user'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.user'
+      buildContext: '$(Build.SourcesDirectory)'
 
   - task: Docker@2
     inputs:
@@ -62,6 +65,7 @@ steps:
       repository: 'sirius-realtime'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.realtime'
+      buildContext: '$(Build.SourcesDirectory)'
   
   - task: Kubernetes@1
     inputs:
