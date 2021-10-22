@@ -5,10 +5,10 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
+    dev.okteto.com/generate-host: "true"
 spec:
   rules:
-    - host: gabgc.cloud.okteto.net
-      http:
+    - http:
         paths:
           - path: /user($|/)(.*)
             pathType: Prefix
