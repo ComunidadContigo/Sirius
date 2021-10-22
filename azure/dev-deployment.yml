@@ -63,4 +63,66 @@ steps:
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.realtime'
   
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'set'
+      arguments: 'image deployment/sirius-user sirius-user=sirius-user:$(Build.BuildId)'
   
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'set'
+      arguments: 'image deployment/sirius-auth sirius-auth=sirius-auth:$(Build.BuildId)'
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'set'
+      arguments: 'image deployment/sirius-buddy sirius-buddy=sirius-buddy:$(Build.BuildId)'
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'set'
+      arguments: 'image deployment/sirius-realtime sirius-realtime=sirius-realtime:$(Build.BuildId)'
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'rollout'
+      arguments: 'restart deployment/sirius-auth'
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'rollout'
+      arguments: 'restart deployment/sirius-user'
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'rollout'
+      arguments: 'restart deployment/sirius-buddy'
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceEndpoint: 'okteto k8s'
+      namespace: 'gabgc'
+      command: 'rollout'
+      arguments: 'restart deployment/sirius-realtime'
