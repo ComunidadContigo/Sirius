@@ -152,7 +152,6 @@ describe("User Controller", () => {
         "string",
         "string",
         "string",
-        ,
         "boolean",
       ],
       {
