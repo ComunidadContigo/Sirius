@@ -19,6 +19,7 @@ describe("Request Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const request1: ReqModel = {
+      rq_id: 1,
       request_date: "",
       isFulfilled: false,
       request_meeting_point: "",
@@ -27,6 +28,7 @@ describe("Request Controller", () => {
     };
 
     const request2: ReqModel = {
+      rq_id: 2,
       request_date: "",
       isFulfilled: false,
       request_meeting_point: "",
@@ -35,6 +37,7 @@ describe("Request Controller", () => {
     };
 
     const request3: ReqModel = {
+      rq_id: 3,
       request_date: "",
       isFulfilled: false,
       request_meeting_point: "",
@@ -66,6 +69,7 @@ describe("Request Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const request: ReqModel = {
+      rq_id: 1,
       request_date: "",
       isFulfilled: false,
       request_meeting_point: "",
@@ -94,10 +98,11 @@ describe("Request Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const request: ReqModel = {
+      rq_id: 1,
       request_date: "",
       isFulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      isUrgent: true,
       request_destination: "",
     };
 
@@ -105,12 +110,6 @@ describe("Request Controller", () => {
       "INSERT INTO request " +
       "(request_date, isFulfilled, request_meeting_point, isUrgent, request_destination) " +
       "VALUES ($1, $2, $3, $4, $5);";
-
-    // since createUser also queries for taken emails and usernames, we need to add those too
-    pgmock.add("SELECT * FROM request WHERE email = $1;", ["string"], {
-      rowCount: 0,
-      rows: [],
-    });
 
     pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
       rowCount: 1,
@@ -132,6 +131,7 @@ describe("Request Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const request: ReqModel = {
+      rq_id: 1,
       request_date: "",
       isFulfilled: false,
       request_meeting_point: "",

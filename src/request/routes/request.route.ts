@@ -4,9 +4,10 @@ import HttpError from "../../common/models/error.model";
 import HttpResponse from "../../common/models/response.model";
 import RequestController from "../controllers/request.controller";
 import ReqModel from "../models/request.model";
+import AuthMiddleware from "../../common/middleware/auth.middleware";
 
-export default function UserRouter(): Router {
-  const userController: RequestController = new RequestController();
+export default function RequestRouter(): Router {
+  const requestController: RequestController = new RequestController();
   const router: Router = Router();
 
   /**
@@ -17,15 +18,15 @@ export default function UserRouter(): Router {
   router.get("/", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     // TODO add functionality to handle LIMIT.
-    userController.getAllRequests(db).then(
-      (users: ReqModel[]) => {
+    requestController.getAllRequests(db).then(
+      (requests: ReqModel[]) => {
         const response: HttpResponse<ReqModel[]> = {
           success: true,
           returnCode: 200,
           messages: [],
           errors: [],
-          data: users,
-          rowCount: users.length,
+          data: requests,
+          rowCount: requests.length,
         };
         res.status(response.returnCode).send(response);
       },
@@ -57,7 +58,7 @@ export default function UserRouter(): Router {
    */
   router.get("/:id", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.getRequestByID(db, +req.params.id).then(
+    requestController.getRequestByID(db, +req.params.id).then(
       (reqmod: ReqModel) => {
         const response: HttpResponse<ReqModel> = {
           success: true,
@@ -97,7 +98,7 @@ export default function UserRouter(): Router {
    */
   router.post("/", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.createRequest(db, req.body as ReqModel).then(
+    requestController.createRequest(db, req.body as ReqModel).then(
       (success: boolean) => {
         const response: HttpResponse = {
           success: success,
@@ -136,7 +137,7 @@ export default function UserRouter(): Router {
    */
   router.put("/:id", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController
+    requestController
       .updateRequestByID(db, +req.params.id, req.body as ReqModel)
       .then(
         (success: boolean) => {
@@ -177,7 +178,7 @@ export default function UserRouter(): Router {
    */
   router.delete("/:id", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.deleteRequestByID(db, +req.params.id).then(
+    requestController.deleteRequestByID(db, +req.params.id).then(
       (success: boolean) => {
         const response: HttpResponse = {
           success: success,

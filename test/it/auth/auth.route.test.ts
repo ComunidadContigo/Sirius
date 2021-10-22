@@ -33,6 +33,8 @@ describe("Auth API Connection", () => {
       isVetted: false,
       b_id: 0,
       r_id: 0,
+      longitude: "",
+      latitude: "",
     };
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
       rowCount: 1,

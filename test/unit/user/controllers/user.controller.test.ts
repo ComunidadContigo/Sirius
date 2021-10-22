@@ -30,6 +30,8 @@ describe("User Controller", () => {
       b_id: 0,
       r_id: 0,
       gender: "",
+      longitude: "",
+      latitude: "",
     };
 
     const user2: User = {
@@ -44,6 +46,8 @@ describe("User Controller", () => {
       b_id: 0,
       r_id: 0,
       gender: "",
+      longitude: "",
+      latitude: "",
     };
 
     const user3: User = {
@@ -58,6 +62,8 @@ describe("User Controller", () => {
       b_id: 0,
       r_id: 0,
       gender: "",
+      longitude: "",
+      latitude: "",
     };
 
     pgmock.add('SELECT * FROM "user";', [], {
@@ -95,6 +101,8 @@ describe("User Controller", () => {
       b_id: 0,
       r_id: 0,
       gender: "",
+      longitude: "",
+      latitude: "",
     };
 
     pgmock.add('SELECT * FROM "user" WHERE u_id = $1;', ["number"], {
@@ -129,12 +137,14 @@ describe("User Controller", () => {
       b_id: 0,
       r_id: 0,
       gender: "asdf",
+      longitude: "",
+      latitude: "",
     };
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
-      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number, longitude, latitude, isVetted) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
@@ -145,6 +155,8 @@ describe("User Controller", () => {
     pgmock.add(
       query,
       [
+        "string",
+        "string",
         "string",
         "string",
         "string",
@@ -186,6 +198,8 @@ describe("User Controller", () => {
       b_id: 0,
       r_id: 0,
       gender: "",
+      longitude: "",
+      latitude: "",
     };
 
     const query = buildUserUpdateByIDQuery<User>("user", 1, user);

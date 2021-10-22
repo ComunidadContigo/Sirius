@@ -17,7 +17,7 @@ CREATE TABLE requester
 
 CREATE TABLE request
 (
-  request_date DATE NOT NULL,
+  request_date VARCHAR(100) NOT NULL,
   isFulfilled INT NOT NULL,
   request_meeting_point VARCHAR(100) NOT NULL,
   isUrgent INT NOT NULL,

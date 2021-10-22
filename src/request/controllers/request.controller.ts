@@ -31,7 +31,7 @@ export default class RequestController {
       "(request_date, isFulfilled, request_meeting_point, isUrgent, request_destination) " +
       "VALUES ($1, $2, $3, $4, $5);";
     const queryResult: QueryResult = await db.query(query, [
-      new Date(request.request_date).toISOString,
+      request.request_date,
       request.isFulfilled || false,
       request.request_meeting_point,
       request.isUrgent || false,
