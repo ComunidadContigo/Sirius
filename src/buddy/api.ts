@@ -17,9 +17,5 @@ export default function BuddyServer(): express.Application {
   app.use(express.json()); // only parses request bodies that send JSON
   app.use(api_router()); // adds custom routes
 
-  app.get("/", (req: express.Request, res: express.Response) => {
-    res.status(200).send("Server running!");
-  });
-
   return app;
 }

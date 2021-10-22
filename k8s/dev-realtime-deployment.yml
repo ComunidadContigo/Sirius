@@ -33,13 +33,13 @@ spec:
     spec:
       containers:
         - name: sirius-realtime-service
-          image: "gabgcdev/contigocommunity:sirius_realtime_service"
+          image: "gabgcdev/sirius-realtime"
           imagePullPolicy: Always
           ports:
             - containerPort: 80
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 80
             initialDelaySeconds: 10
           env:
