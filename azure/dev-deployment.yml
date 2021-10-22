@@ -38,7 +38,7 @@ steps:
   - task: Docker@2
     inputs:
       containerRegistry: 'gabgc Docker Hub'
-      repository: 'sirius-auth'
+      repository: 'gabgcdev/sirius-auth'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.auth'
       buildContext: '$(Build.SourcesDirectory)'
@@ -46,7 +46,7 @@ steps:
   - task: Docker@2
     inputs:
       containerRegistry: 'gabgc Docker Hub'
-      repository: 'sirius-buddy'
+      repository: 'gabgcdev/sirius-buddy'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.buddy'
       buildContext: '$(Build.SourcesDirectory)'
@@ -54,7 +54,7 @@ steps:
   - task: Docker@2
     inputs:
       containerRegistry: 'gabgc Docker Hub'
-      repository: 'sirius-user'
+      repository: 'gabgcdev/sirius-user'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.user'
       buildContext: '$(Build.SourcesDirectory)'
@@ -62,7 +62,7 @@ steps:
   - task: Docker@2
     inputs:
       containerRegistry: 'gabgc Docker Hub'
-      repository: 'sirius-realtime'
+      repository: 'gabgcdev/sirius-realtime'
       command: 'buildAndPush'
       Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.realtime'
       buildContext: '$(Build.SourcesDirectory)'
@@ -73,7 +73,7 @@ steps:
       kubernetesServiceEndpoint: 'okteto k8s'
       namespace: 'gabgc'
       command: 'set'
-      arguments: 'image deployment/sirius-user sirius-user=sirius-user:$(Build.BuildId)'
+      arguments: 'image deployment/sirius-user *=gabgcdev/sirius-user:$(Build.BuildId)'
   
   - task: Kubernetes@1
     inputs:
@@ -81,7 +81,7 @@ steps:
       kubernetesServiceEndpoint: 'okteto k8s'
       namespace: 'gabgc'
       command: 'set'
-      arguments: 'image deployment/sirius-auth sirius-auth=sirius-auth:$(Build.BuildId)'
+      arguments: 'image deployment/sirius-auth *=gabgcdev/sirius-auth:$(Build.BuildId)'
 
   - task: Kubernetes@1
     inputs:
@@ -89,7 +89,7 @@ steps:
       kubernetesServiceEndpoint: 'okteto k8s'
       namespace: 'gabgc'
       command: 'set'
-      arguments: 'image deployment/sirius-buddy sirius-buddy=sirius-buddy:$(Build.BuildId)'
+      arguments: 'image deployment/sirius-buddy *=gabgcdev/sirius-buddy:$(Build.BuildId)'
 
   - task: Kubernetes@1
     inputs:
@@ -97,7 +97,7 @@ steps:
       kubernetesServiceEndpoint: 'okteto k8s'
       namespace: 'gabgc'
       command: 'set'
-      arguments: 'image deployment/sirius-realtime sirius-realtime=sirius-realtime:$(Build.BuildId)'
+      arguments: 'image deployment/sirius-realtime *=gabgcdev/sirius-realtime:$(Build.BuildId)'
 
   - task: Kubernetes@1
     inputs:
