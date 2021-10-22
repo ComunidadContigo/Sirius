@@ -7,8 +7,7 @@ export default interface User {
   first_name: string;
   gender: string;
   last_name: string;
-  longitude: string;
-  latitude: string;
+  user_last_location?: string;
   isVetted?: boolean;
   b_id?: number;
   r_id?: number;
