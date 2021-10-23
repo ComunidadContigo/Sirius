@@ -20,6 +20,7 @@ export interface DBConfig {
   host: string;
   port: number;
   database: string;
+  ssl: any;
 }
 
 const environment: Environment = {
@@ -29,6 +30,9 @@ const environment: Environment = {
     host: process.env.DBURL!,
     port: Number(process.env.DBPORT!),
     database: process.env.DBNAME!,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   },
 
   hostconf: {

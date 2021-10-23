@@ -67,7 +67,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .get("/user")
+      .get("/")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
@@ -99,7 +99,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .get("/user/1")
+      .get("/1")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
@@ -154,7 +154,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .post("/user/")
+      .post("/")
       .send(user)
       .end((err, res) => {
         const resBody: HttpResponse<User> = res.body; //type check
@@ -187,7 +187,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .put("/user/location/1")
+      .put("/location/1")
       .send(user)
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
@@ -208,7 +208,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .delete("/user/1")
+      .delete("/1")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
@@ -229,7 +229,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .get("/user")
+      .get("/")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
