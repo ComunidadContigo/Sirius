@@ -8,6 +8,7 @@ import { Application } from "express";
 import ReqModel from "../../../src/request/models/request.model";
 import HttpResponse from "../../../src/common/models/response.model";
 import { buildRequestUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
+import jwt from "jsonwebtoken";
 import environment from "../../../src/common/config/environment.config";
 
 describe("Request API connection", () => {
@@ -19,6 +20,11 @@ describe("Request API connection", () => {
   beforeEach(() => {
     pgmock.dropAll();
   });
+
+  const accessToken = jwt.sign(
+    { message: "Verified!" },
+    environment.secret_key_access
+  );
 
   it("should successfully connect to API | GET /request", (done: Done) => {
     const request1: ReqModel = {
@@ -56,6 +62,7 @@ describe("Request API connection", () => {
     chai
       .request(app)
       .get("/request")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
         const resBody: HttpResponse<ReqModel[]> = res.body; //type check
@@ -85,6 +92,7 @@ describe("Request API connection", () => {
     chai
       .request(app)
       .get("/request/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
         const resBody: HttpResponse<ReqModel> = res.body; //type check
@@ -119,6 +127,7 @@ describe("Request API connection", () => {
       .request(app)
       .post("/request/")
       .send(req)
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         const resBody: HttpResponse<ReqModel> = res.body; //type check
         expect(resBody.success).to.be.true;
@@ -148,6 +157,7 @@ describe("Request API connection", () => {
       .request(app)
       .put("/request/1")
       .send(req)
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
         const resBody: HttpResponse<ReqModel> = res.body; //type check
@@ -167,6 +177,7 @@ describe("Request API connection", () => {
     chai
       .request(app)
       .delete("/request/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
         const resBody: HttpResponse<ReqModel> = res.body; //type check
@@ -187,6 +198,7 @@ describe("Request API connection", () => {
     chai
       .request(app)
       .get("/request")
+      .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
         const resBody: HttpResponse<ReqModel[]> = res.body; //type check

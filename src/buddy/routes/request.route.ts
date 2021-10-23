@@ -15,7 +15,7 @@ export default function RequestRouter(): Router {
    * GET /request
    * Optional Body = {limit: number} to limit amount of results.
    */
-  router.get("/", (req: Request, res: Response) => {
+  router.get("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     // TODO add functionality to handle LIMIT.
     requestController.getAllRequests(db).then(
@@ -56,7 +56,7 @@ export default function RequestRouter(): Router {
    * Get Request by ID
    * GET /request/:id
    */
-  router.get("/:id", (req: Request, res: Response) => {
+  router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     requestController.getRequestByID(db, +req.params.id).then(
       (reqmod: ReqModel) => {
@@ -96,7 +96,7 @@ export default function RequestRouter(): Router {
    * POST /request
    * Body should match the request model.
    */
-  router.post("/", (req: Request, res: Response) => {
+  router.post("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     requestController.createRequest(db, req.body as ReqModel).then(
       (success: boolean) => {
@@ -135,7 +135,7 @@ export default function RequestRouter(): Router {
    * PUT /request/:id
    * Body should match the request model.
    */
-  router.put("/:id", (req: Request, res: Response) => {
+  router.put("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     requestController
       .updateRequestByID(db, +req.params.id, req.body as ReqModel)
@@ -176,7 +176,7 @@ export default function RequestRouter(): Router {
    * DELETE /request/:id
    *
    */
-  router.delete("/:id", (req: Request, res: Response) => {
+  router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     requestController.deleteRequestByID(db, +req.params.id).then(
       (success: boolean) => {
