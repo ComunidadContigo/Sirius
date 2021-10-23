@@ -3,7 +3,7 @@ import { Pool } from "pg";
 import HttpError from "../../common/models/error.model";
 import HttpResponse from "../../common/models/response.model";
 import RequestController from "../controllers/request.controller";
-import ReqModel from "../models/request.model";
+import ReqModel from "../../request/models/request.model";
 import AuthMiddleware from "../../common/middleware/auth.middleware";
 
 export default function RequestRouter(): Router {

@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { buildRequestUpdateByIDQuery } from "../../common/tools/queryBuilder";
-import ReqModel from "../models/request.model";
+import ReqModel from "../../request/models/request.model";
 import HttpError from "../../common/models/error.model";
 
 export default class RequestController {

@@ -4,13 +4,11 @@ import api_router from "./routes/router";
 import environmentConfig from "../common/config/environment.config";
 import { Pool } from "pg";
 
-export default function BuddyServer(): express.Application {
+export default function BuddyServer(dbPool: Pool): express.Application {
   const app: express.Application = express();
 
   // set up DB connection
-  // set up DB connection
-  const pool: Pool = new Pool(environmentConfig.dbconfig);
-  app.set("dbPool", pool);
+  app.set("dbPool", dbPool);
 
   // add middleware
   app.use(cors()); // adds CORS policy

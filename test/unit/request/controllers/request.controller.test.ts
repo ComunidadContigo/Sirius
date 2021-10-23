@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Done } from "mocha";
 import PGMock2, { getPool } from "pgmock2";
 import { Pool } from "pg";
-import RequestController from "../../../../src/request/controllers/request.controller";
+import RequestController from "../../../../src/buddy/controllers/request.controller";
 import ReqModel from "../../../../src/request/models/request.model";
 import { buildRequestUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
 import HttpError from "../../../../src/common/models/error.model";
