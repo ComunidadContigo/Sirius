@@ -2,29 +2,31 @@ import { Request, Response, Router } from "express";
 import { Pool } from "pg";
 import HttpError from "../../common/models/error.model";
 import HttpResponse from "../../common/models/response.model";
-import UserController from "../controllers/user.controller";
-import User from "../models/user.model";
+import RequestController from "../controllers/request.controller";
+import ReqModel from "../../request/models/request.model";
 import AuthMiddleware from "../../common/middleware/auth.middleware";
 
-export default function UserRouter(): Router {
-  const userController: UserController = new UserController();
+export default function RequestRouter(): Router {
+  const requestController: RequestController = new RequestController();
   const router: Router = Router();
 
-  // Get All Users
-  // GET /user
-  // Optional Body = { limit: number } to limit the results.
+  /**
+   * Get All Requests
+   * GET /request
+   * Optional Body = {limit: number} to limit amount of results.
+   */
   router.get("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     // TODO add functionality to handle LIMIT.
-    userController.getAllUsers(db).then(
-      (users: User[]) => {
-        const response: HttpResponse<User[]> = {
+    requestController.getAllRequests(db).then(
+      (requests: ReqModel[]) => {
+        const response: HttpResponse<ReqModel[]> = {
           success: true,
           returnCode: 200,
           messages: [],
           errors: [],
-          data: users,
-          rowCount: users.length,
+          data: requests,
+          rowCount: requests.length,
         };
         res.status(response.returnCode).send(response);
       },
@@ -50,18 +52,20 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Get User by ID
-  // GET /user/:id
+  /**
+   * Get Request by ID
+   * GET /request/:id
+   */
   router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.getUserByID(db, +req.params.id).then(
-      (user: User) => {
-        const response: HttpResponse<User> = {
+    requestController.getRequestByID(db, +req.params.id).then(
+      (reqmod: ReqModel) => {
+        const response: HttpResponse<ReqModel> = {
           success: true,
           returnCode: 200,
           messages: [],
           errors: [],
-          data: user,
+          data: reqmod,
         };
         res.status(response.returnCode).send(response);
       },
@@ -87,12 +91,14 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Create User
-  // POST /user
-  // Body should match the user model.
-  router.post("/", (req: Request, res: Response) => {
+  /**
+   * Create Request
+   * POST /request
+   * Body should match the request model.
+   */
+  router.post("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.createUser(db, req.body as User).then(
+    requestController.createRequest(db, req.body as ReqModel).then(
       (success: boolean) => {
         const response: HttpResponse = {
           success: success,
@@ -124,85 +130,55 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Update User By ID
-  // PUT /user/:id
-  // Body should match the user model.
+  /**
+   * Update Request by ID
+   * PUT /request/:id
+   * Body should match the request model.
+   */
   router.put("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.updateUserByID(db, +req.params.id, req.body as User).then(
-      (success: boolean) => {
-        const response: HttpResponse = {
-          success: success,
-          returnCode: 202,
-          messages: [],
-          errors: [],
-        };
-        res.status(response.returnCode).send(response);
-      },
-      (err) => {
-        let response: HttpResponse;
-        if (err instanceof HttpError) {
-          response = {
-            success: false,
-            returnCode: err.status,
+    requestController
+      .updateRequestByID(db, +req.params.id, req.body as ReqModel)
+      .then(
+        (success: boolean) => {
+          const response: HttpResponse = {
+            success: success,
+            returnCode: 202,
             messages: [],
-            errors: [err.message, err.stack || ""],
+            errors: [],
           };
-        } else {
-          response = {
-            success: false,
-            returnCode: 500,
-            messages: [],
-            errors: [err.message],
-          };
+          res.status(response.returnCode).send(response);
+        },
+        (err) => {
+          let response: HttpResponse;
+          if (err instanceof HttpError) {
+            response = {
+              success: false,
+              returnCode: err.status,
+              messages: [],
+              errors: [err.message, err.stack || ""],
+            };
+          } else {
+            response = {
+              success: false,
+              returnCode: 500,
+              messages: [],
+              errors: [err.message],
+            };
+          }
+          res.status(response.returnCode).send(response);
         }
-        res.status(response.returnCode).send(response);
-      }
-    );
+      );
   });
 
-  // Update User Location By ID
-  // PUT /user/location/:id
-  // Body should match the user model.
-  router.put("/location/:id", (req: Request, res: Response) => {
-    const db: Pool = req.app.get("dbPool");
-    userController.updateUserByID(db, +req.params.id, req.body as User).then(
-      (success: boolean) => {
-        const response: HttpResponse = {
-          success: success,
-          returnCode: 202,
-          messages: [],
-          errors: [],
-        };
-        res.status(response.returnCode).send(response);
-      },
-      (err) => {
-        let response: HttpResponse;
-        if (err instanceof HttpError) {
-          response = {
-            success: false,
-            returnCode: err.status,
-            messages: [],
-            errors: [err.message, err.stack || ""],
-          };
-        } else {
-          response = {
-            success: false,
-            returnCode: 500,
-            messages: [],
-            errors: [err.message],
-          };
-        }
-        res.status(response.returnCode).send(response);
-      }
-    );
-  });
-
-  // Delete User By ID
-  // DELETE /user/:id
+  /**
+   * Delete Request by ID
+   * DELETE /request/:id
+   *
+   */
   router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    userController.deleteUserByID(db, +req.params.id).then(
+    requestController.deleteRequestByID(db, +req.params.id).then(
       (success: boolean) => {
         const response: HttpResponse = {
           success: success,

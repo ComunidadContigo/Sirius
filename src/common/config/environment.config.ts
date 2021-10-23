@@ -30,9 +30,12 @@ const environment: Environment = {
     host: process.env.DBURL!,
     port: Number(process.env.DBPORT!),
     database: process.env.DBNAME!,
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    ssl:
+      process.env.NODE_ENV === "testing"
+        ? null
+        : {
+            rejectUnauthorized: false,
+          },
   },
 
   hostconf: {

@@ -17,7 +17,7 @@ CREATE TABLE requester
 
 CREATE TABLE request
 (
-  request_date DATE NOT NULL,
+  request_date VARCHAR(100) NOT NULL,
   isFulfilled INT NOT NULL,
   request_meeting_point VARCHAR(100) NOT NULL,
   isUrgent INT NOT NULL,
@@ -66,6 +66,7 @@ CREATE TABLE "user"
   last_name VARCHAR(25) NOT NULL,
   gender VARCHAR(30) NOT NULL,
   u_id SERIAL PRIMARY KEY,
+  user_last_location VARCHAR(100),
   isVetted BOOLEAN NOT NULL,
   b_id INT,
   r_id INT,
@@ -74,6 +75,7 @@ CREATE TABLE "user"
   UNIQUE (email),
   UNIQUE (phone_number)
 );
+
 
 CREATE TABLE refreshtoken
 (

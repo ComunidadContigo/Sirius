@@ -1,0 +1,211 @@
+import { Done } from "mocha";
+import { Pool } from "pg";
+import PGMock2, { getPool } from "pgmock2";
+import BuddyServer from "../../../src/buddy/api";
+import chai, { expect } from "chai";
+import chaiHttp from "chai-http";
+import { Application } from "express";
+import ReqModel from "../../../src/request/models/request.model";
+import HttpResponse from "../../../src/common/models/response.model";
+import { buildRequestUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
+import jwt from "jsonwebtoken";
+import environment from "../../../src/common/config/environment.config";
+
+describe("Request API connection", () => {
+  const pgmock: PGMock2 = new PGMock2();
+  const dbPool: Pool = getPool(pgmock);
+  chai.use(chaiHttp);
+  const app: Application = BuddyServer(dbPool);
+
+  beforeEach(() => {
+    pgmock.dropAll();
+  });
+
+  const accessToken = jwt.sign(
+    { message: "Verified!" },
+    environment.secret_key_access
+  );
+
+  it("should successfully connect to API | GET /request", (done: Done) => {
+    const request1: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      isFulfilled: false,
+      request_meeting_point: "",
+      isUrgent: false,
+      request_destination: "",
+    };
+
+    const request2: ReqModel = {
+      rq_id: 2,
+      request_date: "",
+      isFulfilled: false,
+      request_meeting_point: "",
+      isUrgent: false,
+      request_destination: "",
+    };
+
+    const request3: ReqModel = {
+      rq_id: 3,
+      request_date: "",
+      isFulfilled: false,
+      request_meeting_point: "",
+      isUrgent: false,
+      request_destination: "",
+    };
+
+    pgmock.add("SELECT * FROM request;", [], {
+      rowCount: 3,
+      rows: [request1, request2, request3],
+    });
+
+    chai
+      .request(app)
+      .get("/request")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel[]> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(200);
+        expect(resBody.rowCount).to.eql(3);
+        expect(resBody.data).to.not.be.undefined;
+        done();
+      });
+  });
+
+  it("should successfully connect to API | GET /request/:id", (done: Done) => {
+    const req: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      isFulfilled: false,
+      request_meeting_point: "",
+      isUrgent: false,
+      request_destination: "",
+    };
+
+    pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
+      rowCount: 1,
+      rows: [req],
+    });
+
+    chai
+      .request(app)
+      .get("/request/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(200);
+        expect(resBody.rowCount).to.be.undefined; // get request by id does not return rowCount
+        expect(resBody.data).to.not.be.undefined;
+        done();
+      });
+  });
+
+  it("should successfully connect to API | POST /request", (done: Done) => {
+    const req: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      isFulfilled: false,
+      request_meeting_point: "",
+      isUrgent: false,
+      request_destination: "",
+    };
+
+    const query =
+      "INSERT INTO request " +
+      "(request_date, isFulfilled, request_meeting_point, isUrgent, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5);";
+
+    pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
+      rowCount: 1,
+    });
+
+    chai
+      .request(app)
+      .post("/request/")
+      .send(req)
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(201);
+        expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
+        expect(resBody.data).to.be.undefined; // this route does not return data
+        done();
+      });
+  });
+
+  it("should successfully connect to API | PUT /request/:id", (done: Done) => {
+    const req: ReqModel = {
+      request_date: "",
+      isFulfilled: false,
+      request_meeting_point: "",
+      isUrgent: false,
+      request_destination: "",
+    };
+
+    const query = buildRequestUpdateByIDQuery<ReqModel>("request", 1, req);
+
+    pgmock.add(query, ["number"], {
+      rowCount: 1,
+    });
+
+    chai
+      .request(app)
+      .put("/request/1")
+      .send(req)
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(202);
+        expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
+        expect(resBody.data).to.be.undefined; // this route does not return data
+        done();
+      });
+  });
+
+  it("should successfully connect to API | DELETE /request/:id", (done: Done) => {
+    pgmock.add("DELETE FROM request WHERE rq_id = $1;", ["number"], {
+      rowCount: 1,
+    });
+
+    chai
+      .request(app)
+      .delete("/request/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(203);
+        expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
+        expect(resBody.data).to.be.undefined; // this route does not return data
+        done();
+      });
+  });
+
+  it("should give an error | GET /request 404", (done: Done) => {
+    pgmock.add("SELECT * FROM request", [], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    chai
+      .request(app)
+      .get("/request")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel[]> = res.body; //type check
+        expect(resBody.success).to.be.false;
+        expect(resBody.returnCode).to.be.eql(404);
+        expect(resBody.errors[0]).to.be.eql("Database has no requests!");
+        done();
+      });
+  });
+});

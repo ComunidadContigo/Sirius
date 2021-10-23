@@ -42,12 +42,12 @@
     "build": "tsc",
     "start": "node ./dist/index.js",
     "clean": "rm -rf dist/",
-    "dev-auth": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/auth/main.js\"",
-    "dev-user": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/user/main.js\"",
-    "dev-buddy": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/buddy/main.js\"",
-    "dev-realtime": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node ./dist/real_time/main.js\"",
-    "test": "cross-env NODE_ENV=development mocha -r ts-node/register --watch-extensions ts --watch --watch-files src/**/*,test/**/* 'test/**/*.test.ts'",
-    "test:ci": "cross-env NODE_ENV=development mocha -r ts-node/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
+    "dev-auth": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/auth/main.js\"",
+    "dev-user": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/user/main.js\"",
+    "dev-buddy": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/buddy/main.js\"",
+    "dev-realtime": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/real_time/main.js\"",
+    "test": "cross-env NODE_ENV=testing mocha -r ts-node/register --watch-extensions ts --watch --watch-files src/**/*,test/**/* 'test/**/*.test.ts'",
+    "test:ci": "cross-env NODE_ENV=testing mocha -r ts-node/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts"
   },
   "repository": {

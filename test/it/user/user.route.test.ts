@@ -166,7 +166,7 @@ describe("User API connection", () => {
       });
   });
 
-  it("should successfully connect to API | PUT /user/:id", (done: Done) => {
+  it("should successfully connect to API | PUT /user/location/:id", (done: Done) => {
     const user: User = {
       u_id: 1,
       email: "test@test.com",
@@ -176,6 +176,7 @@ describe("User API connection", () => {
       first_name: "",
       gender: "",
       last_name: "",
+      user_last_location: "(52.8165972, -2.1174389000000247)",
     };
 
     const query = buildUserUpdateByIDQuery<User>("user", 1, user);
@@ -186,7 +187,7 @@ describe("User API connection", () => {
 
     chai
       .request(app)
-      .put("/1")
+      .put("/location/1")
       .send(user)
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
