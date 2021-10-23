@@ -47,7 +47,7 @@ describe("Auth API Connection", () => {
     );
     chai
       .request(app)
-      .post("/auth/login")
+      .post("/login")
       .send({ email: "test@test.test", password: "test" })
       .end((err, res) => {
         if (err) done(err);

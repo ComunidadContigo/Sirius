@@ -4,7 +4,12 @@ import environmentConfig from "../common/config/environment.config";
 import { Pool } from "pg";
 
 export default function RealTimeServer(): Server {
-  const httpServer: Server = createServer();
+  const httpServer: Server = createServer((req, res) => {
+    if (req.url === "/health") {
+      res.write("Realtime server running!");
+      res.end();
+    }
+  });
   const io: IOServer = new IOServer(httpServer, {
     /* options */
   });

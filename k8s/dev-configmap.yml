@@ -1,0 +1,7 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: sirius-configmap
+data:
+  DBURL: ec2-52-21-193-223.compute-1.amazonaws.com
+  DBPORT: "5432"

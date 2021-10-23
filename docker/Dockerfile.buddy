@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:alpine
 ENV NODE_ENV=testing
 ENV PORT=80
 

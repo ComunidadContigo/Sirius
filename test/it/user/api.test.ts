@@ -15,9 +15,9 @@ describe("User API connection", () => {
   it("should successfully connect to API", (done: Done) => {
     chai
       .request(app)
-      .get("/")
+      .get("/health")
       .end((err, res) => {
-        expect(res.text).to.be.equal("Server running!");
+        expect(res.text).to.be.equal("User server running!");
         done();
       });
   });
