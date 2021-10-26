@@ -5,7 +5,7 @@ import BuddyServer from "../../../src/buddy/api";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { Application } from "express";
-import ReqModel from "../../../src/request/models/request.model";
+import ReqModel from "../../../src/buddy/models/request.model";
 import HttpResponse from "../../../src/common/models/response.model";
 import { buildRequestUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
 import jwt from "jsonwebtoken";
