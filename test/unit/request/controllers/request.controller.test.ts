@@ -4,7 +4,7 @@ import PGMock2, { getPool } from "pgmock2";
 import { Pool } from "pg";
 import RequestController from "../../../../src/buddy/controllers/request.controller";
 import ReqModel from "../../../../src/request/models/request.model";
-import { buildRequestUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
+import { buildUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
 import HttpError from "../../../../src/common/models/error.model";
 
 describe("Request Controller", () => {
@@ -21,27 +21,27 @@ describe("Request Controller", () => {
     const request1: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
     };
 
     const request2: ReqModel = {
       rq_id: 2,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
     };
 
     const request3: ReqModel = {
       rq_id: 3,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
     };
 
@@ -71,9 +71,9 @@ describe("Request Controller", () => {
     const request: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
     };
 
@@ -100,15 +100,15 @@ describe("Request Controller", () => {
     const request: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: true,
+      is_urgent: true,
       request_destination: "",
     };
 
     const query =
       "INSERT INTO request " +
-      "(request_date, isFulfilled, request_meeting_point, isUrgent, request_destination) " +
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, request_destination) " +
       "VALUES ($1, $2, $3, $4, $5);";
 
     pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
@@ -133,13 +133,18 @@ describe("Request Controller", () => {
     const request: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
     };
 
-    const query = buildRequestUpdateByIDQuery<ReqModel>("request", 1, request);
+    const query = buildUpdateByIDQuery<ReqModel>(
+      "request",
+      "rq_id",
+      1,
+      request
+    );
 
     pgmock.add(query, [], {
       rowCount: 1,

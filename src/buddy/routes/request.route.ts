@@ -53,6 +53,47 @@ export default function RequestRouter(): Router {
   });
 
   /**
+   * Get Request by isFulfilled
+   * GET /request/isfulfilled
+   * Returns all requests that need to be fulfilled.
+   */
+  router.get("/is_fulfilled", AuthMiddleware, (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    requestController.getRequestByisFulfilled(db).then(
+      (requests: ReqModel[]) => {
+        const response: HttpResponse<ReqModel[]> = {
+          success: true,
+          returnCode: 200,
+          messages: [],
+          errors: [],
+          data: requests,
+          rowCount: requests.length,
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
+  /**
    * Get Request by ID
    * GET /request/:id
    */

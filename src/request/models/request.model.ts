@@ -1,8 +1,10 @@
 export default interface ReqModel {
   rq_id?: number;
   request_date: string;
-  isFulfilled: boolean;
+  is_fulfilled: boolean;
   request_meeting_point: string;
-  isUrgent: boolean;
+  is_urgent: boolean;
   request_destination: string;
+  r_id?: number;
+  b_id?: number;
 }
