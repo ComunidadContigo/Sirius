@@ -5,8 +5,6 @@ CREATE TABLE buddy
   b_id SERIAL PRIMARY KEY,
   buddy_rating_avg FLOAT NOT NULL,
   last_location VARCHAR(100) NOT NULL
-  u_id INT NOT NULL,
-  FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );
 
 CREATE TABLE requester
@@ -14,8 +12,6 @@ CREATE TABLE requester
   scheduled_request DATE,
   r_id SERIAL PRIMARY KEY,
   requester_rating_avg FLOAT NOT NULL
-  u_id INT NOT NULL,
-  FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );
 
 CREATE TABLE request
@@ -28,7 +24,7 @@ CREATE TABLE request
   request_destination VARCHAR(100) NOT NULL,
   r_id INT,
   b_id INT,
-  rq_id SERIAL PRIMARY KEY
+  rq_id SERIAL PRIMARY KEY,
   FOREIGN KEY (r_id) REFERENCES requester(r_id),
   FOREIGN KEY (b_id) REFERENCES buddy(b_id),
 );

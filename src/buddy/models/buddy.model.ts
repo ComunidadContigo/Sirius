@@ -4,5 +4,4 @@ export default interface Buddy {
   is_active: boolean;
   buddy_rating_avg: number;
   last_location?: string;
-  u_id: number;
 }

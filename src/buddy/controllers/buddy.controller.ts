@@ -39,13 +39,12 @@ export default class BuddyController {
   public async createBuddy(db: Pool, buddy: Buddy): Promise<boolean> {
     const query =
       "INSERT INTO buddy " +
-      "(availability, is_active, buddy_rating_avg, u_id) " +
-      "VALUES ($1, $2, $3, $4);";
+      "(availability, is_active, buddy_rating_avg) " +
+      "VALUES ($1, $2, $3);";
     const queryResult: QueryResult = await db.query(query, [
       buddy.availability,
       buddy.is_active || false,
       buddy.buddy_rating_avg,
-      buddy.u_id,
     ]);
     return queryResult.rowCount == 1;
   }

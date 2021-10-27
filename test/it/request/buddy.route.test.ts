@@ -33,7 +33,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const buddy2: Buddy = {
@@ -41,7 +40,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const buddy3: Buddy = {
@@ -49,7 +47,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     pgmock.add("SELECT * FROM buddy;", [], {
@@ -78,7 +75,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: true,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const buddy2: Buddy = {
@@ -86,7 +82,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: true,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const buddy3: Buddy = {
@@ -94,7 +89,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const request1: ReqModel = {
@@ -155,7 +149,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     pgmock.add("SELECT * FROM buddy WHERE b_id = $1;", ["number"], {
@@ -183,15 +176,14 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const query =
       "INSERT INTO buddy " +
-      "(availability, is_active, buddy_rating_avg, u_id) " +
-      "VALUES ($1, $2, $3, $4);";
+      "(availability, is_active, buddy_rating_avg) " +
+      "VALUES ($1, $2, $3);";
 
-    pgmock.add(query, ["string", "boolean", "number", "number"], {
+    pgmock.add(query, ["string", "boolean", "number"], {
       rowCount: 1,
     });
 
@@ -216,7 +208,6 @@ describe("Buddy API connection", () => {
       availability: "",
       is_active: false,
       buddy_rating_avg: 0,
-      u_id: 0,
     };
 
     const query = buildUpdateByIDQuery<Buddy>("buddy", "b_id", 1, buddy);
