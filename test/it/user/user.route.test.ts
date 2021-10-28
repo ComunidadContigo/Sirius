@@ -114,7 +114,6 @@ describe("User API connection", () => {
 
   it("should successfully connect to API | POST /user", (done: Done) => {
     const user: User = {
-      u_id: 1,
       email: "test@test.com",
       password: "test",
       phone_number: "test",
@@ -126,8 +125,8 @@ describe("User API connection", () => {
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, is_vetted) " +
-      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
@@ -137,16 +136,7 @@ describe("User API connection", () => {
 
     pgmock.add(
       query,
-      [
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "boolean",
-      ],
+      ["string", "string", "string", "string", "string", "string", "string"],
       {
         rowCount: 1,
       }
