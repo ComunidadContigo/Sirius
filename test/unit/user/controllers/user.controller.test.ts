@@ -26,7 +26,7 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
       gender: "",
@@ -40,7 +40,7 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
       gender: "",
@@ -54,7 +54,7 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
       gender: "",
@@ -91,7 +91,7 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
       gender: "",
@@ -125,7 +125,7 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "asdf",
       last_name: "asdf",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
       gender: "asdf",
@@ -133,7 +133,7 @@ describe("User Controller", () => {
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
+      "(email, password, first_name, last_name, birth_date, gender, phone_number, is_vetted) " +
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
@@ -182,7 +182,7 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
       gender: "",

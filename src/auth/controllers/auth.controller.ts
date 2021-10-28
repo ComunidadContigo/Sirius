@@ -22,7 +22,7 @@ export default class AuthController {
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        isVetted: user.isVetted!,
+        is_vetted: user.is_vetted!,
         b_id: user.b_id!,
         r_id: user.r_id!,
       };
