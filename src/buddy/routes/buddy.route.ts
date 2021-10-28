@@ -101,7 +101,7 @@ export default function BuddyRouter(): Router {
     AuthMiddleware,
     (req: Request, res: Response) => {
       const db: Pool = req.app.get("dbPool");
-      buddyController.findBuddiesToNotify(db).then(
+      buddyController.getBuddyByisActive(db).then(
         (buddies: Buddy[]) => {
           const response: HttpResponse<Buddy[]> = {
             success: true,
