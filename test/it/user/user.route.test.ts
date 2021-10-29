@@ -126,7 +126,7 @@ describe("User API connection", () => {
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, isVetted) " +
+      "(email, password, first_name, last_name, birth_date, gender, phone_number, is_vetted) " +
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
