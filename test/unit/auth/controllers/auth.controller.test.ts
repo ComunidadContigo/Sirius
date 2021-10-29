@@ -31,7 +31,7 @@ describe("Auth Controller", () => {
       gender: "Male",
       last_name: "Perro Grande",
       birth_date: "1/1/1970",
-      isVetted: false,
+      is_vetted: false,
       b_id: 0,
       r_id: 0,
     };
@@ -56,7 +56,7 @@ describe("Auth Controller", () => {
         expect(data.email).to.eql(person.email);
         expect(data.first_name).to.eql(person.first_name);
         expect(data.last_name).to.eql(person.last_name);
-        expect(data.isVetted).to.be.eql(person.isVetted);
+        expect(data.isVetted).to.be.eql(person.is_vetted);
         expect(data.b_id).to.be.eql(person.b_id);
         expect(data.r_id).to.be.eql(person.r_id);
         done();

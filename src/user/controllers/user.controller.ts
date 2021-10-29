@@ -71,7 +71,7 @@ export default class UserController {
       new Date(user.birth_date).toISOString(),
       user.gender,
       user.phone_number,
-      user.isVetted || false,
+      user.is_vetted || false,
     ]);
     return queryResult.rowCount == 1;
   }
