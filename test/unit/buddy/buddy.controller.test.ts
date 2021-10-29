@@ -2,10 +2,10 @@ import { expect } from "chai";
 import { Done } from "mocha";
 import PGMock2, { getPool } from "pgmock2";
 import { Pool } from "pg";
-import BuddyController from "../../../../src/buddy/controllers/buddy.controller";
-import Buddy from "../../../../src/buddy/models/buddy.model";
-import { buildUpdateByIDQuery } from "../../../../src/common/tools/queryBuilder";
-import HttpError from "../../../../src/common/models/error.model";
+import BuddyController from "../../../src/buddy/controllers/buddy.controller";
+import Buddy from "../../../src/buddy/models/buddy.model";
+import { buildUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
+import HttpError from "../../../src/common/models/error.model";
 
 describe("Buddy Controller", () => {
   let pgmock: PGMock2;

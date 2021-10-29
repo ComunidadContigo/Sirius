@@ -5,14 +5,13 @@ import RequestBuddyServer from "../../../src/buddy/api";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { Application } from "express";
-import Buddy from "../../../src/buddy/models/buddy.model";
+import ReqModel from "../../../src/buddy/models/request.model";
 import HttpResponse from "../../../src/common/models/response.model";
 import { buildUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
 import jwt from "jsonwebtoken";
 import environment from "../../../src/common/config/environment.config";
-import ReqModel from "../../../src/request/models/request.model";
 
-describe("Buddy API connection", () => {
+describe("Request API connection", () => {
   const pgmock: PGMock2 = new PGMock2();
   const dbPool: Pool = getPool(pgmock);
   chai.use(chaiHttp);
@@ -27,70 +26,7 @@ describe("Buddy API connection", () => {
     environment.secret_key_access
   );
 
-  it("should successfully connect to API | GET /buddy", (done: Done) => {
-    const buddy1: Buddy = {
-      b_id: 1,
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
-    };
-
-    const buddy2: Buddy = {
-      b_id: 2,
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
-    };
-
-    const buddy3: Buddy = {
-      b_id: 3,
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
-    };
-
-    pgmock.add("SELECT * FROM buddy;", [], {
-      rowCount: 3,
-      rows: [buddy1, buddy2, buddy3],
-    });
-
-    chai
-      .request(app)
-      .get("/buddy")
-      .set({ Authorization: `Bearer ${accessToken}` })
-      .end((err, res) => {
-        if (err) done(err);
-        const resBody: HttpResponse<Buddy[]> = res.body; //type check
-        expect(resBody.success).to.be.true;
-        expect(resBody.returnCode).to.be.eql(200);
-        expect(resBody.rowCount).to.eql(3);
-        expect(resBody.data).to.not.be.undefined;
-        done();
-      });
-  });
-
-  it("should successfully connect to API | GET /buddy/active_buddies", (done: Done) => {
-    const buddy1: Buddy = {
-      b_id: 1,
-      availability: "",
-      is_active: true,
-      buddy_rating_avg: 0,
-    };
-
-    const buddy2: Buddy = {
-      b_id: 2,
-      availability: "",
-      is_active: true,
-      buddy_rating_avg: 0,
-    };
-
-    const buddy3: Buddy = {
-      b_id: 3,
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
-    };
-
+  it("should successfully connect to API | GET /request", (done: Done) => {
     const request1: ReqModel = {
       rq_id: 1,
       request_date: "",
@@ -118,23 +54,66 @@ describe("Buddy API connection", () => {
       request_destination: "",
     };
 
-    pgmock.add("Select * FROM request WHERE is_fulfilled = false;", [], {
-      rowCount: 2,
-      rows: [request2, request3],
-    });
-
-    pgmock.add("SELECT * FROM buddy WHERE is_active = true;", [], {
-      rowCount: 2,
-      rows: [buddy1, buddy2],
+    pgmock.add("SELECT * FROM request;", [], {
+      rowCount: 3,
+      rows: [request1, request2, request3],
     });
 
     chai
       .request(app)
-      .get("/buddy/active_buddies")
+      .get("/request")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
-        const resBody: HttpResponse<Buddy[]> = res.body; //type check
+        const resBody: HttpResponse<ReqModel[]> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(200);
+        expect(resBody.rowCount).to.eql(3);
+        expect(resBody.data).to.not.be.undefined;
+        done();
+      });
+  });
+
+  it("should successfully connect to API | GET /request/is_fulfilled", (done: Done) => {
+    const request1: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      is_fulfilled: true,
+      request_meeting_point: "",
+      is_urgent: false,
+      request_destination: "",
+    };
+
+    const request2: ReqModel = {
+      rq_id: 2,
+      request_date: "",
+      is_fulfilled: false,
+      request_meeting_point: "",
+      is_urgent: false,
+      request_destination: "",
+    };
+
+    const request3: ReqModel = {
+      rq_id: 3,
+      request_date: "",
+      is_fulfilled: false,
+      request_meeting_point: "",
+      is_urgent: false,
+      request_destination: "",
+    };
+
+    pgmock.add("SELECT * FROM request WHERE is_fulfilled = false;", [], {
+      rowCount: 2,
+      rows: [request2, request3],
+    });
+
+    chai
+      .request(app)
+      .get("/request/is_fulfilled")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel[]> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(200);
         expect(resBody.rowCount).to.eql(2);
@@ -143,57 +122,62 @@ describe("Buddy API connection", () => {
       });
   });
 
-  it("should successfully connect to API | GET /buddy/:id", (done: Done) => {
-    const buddy: Buddy = {
-      b_id: 1,
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
+  it("should successfully connect to API | GET /request/:id", (done: Done) => {
+    const req: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      is_fulfilled: false,
+      request_meeting_point: "",
+      is_urgent: false,
+      request_destination: "",
     };
 
-    pgmock.add("SELECT * FROM buddy WHERE b_id = $1;", ["number"], {
+    pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
       rowCount: 1,
-      rows: [buddy],
+      rows: [req],
     });
 
     chai
       .request(app)
-      .get("/buddy/1")
+      .get("/request/1")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
-        const resBody: HttpResponse<Buddy> = res.body; //type check
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(200);
-        expect(resBody.rowCount).to.be.undefined; // get buddy by id does not return rowCount
+        expect(resBody.rowCount).to.be.undefined; // get request by id does not return rowCount
         expect(resBody.data).to.not.be.undefined;
         done();
       });
   });
 
-  it("should successfully connect to API | POST /buddy", (done: Done) => {
-    const buddy: Buddy = {
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
+  it("should successfully connect to API | POST /request", (done: Done) => {
+    const req: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      is_fulfilled: true,
+      request_meeting_point: "",
+      is_urgent: false,
+      request_destination: "",
     };
 
     const query =
-      "INSERT INTO buddy " +
-      "(availability, is_active, buddy_rating_avg) " +
-      "VALUES ($1, $2, $3);";
+      "INSERT INTO request " +
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5);";
 
-    pgmock.add(query, ["string", "boolean", "number"], {
+    pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
       rowCount: 1,
     });
 
     chai
       .request(app)
-      .post("/buddy/")
-      .send(buddy)
+      .post("/request/")
+      .send(req)
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
-        const resBody: HttpResponse<Buddy> = res.body; //type check
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(201);
         expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
@@ -202,15 +186,16 @@ describe("Buddy API connection", () => {
       });
   });
 
-  it("should successfully connect to API | PUT /buddy/:id", (done: Done) => {
-    const buddy: Buddy = {
-      b_id: 1,
-      availability: "",
-      is_active: false,
-      buddy_rating_avg: 0,
+  it("should successfully connect to API | PUT /request/:id", (done: Done) => {
+    const req: ReqModel = {
+      request_date: "",
+      is_fulfilled: true,
+      request_meeting_point: "",
+      is_urgent: false,
+      request_destination: "",
     };
 
-    const query = buildUpdateByIDQuery<Buddy>("buddy", "b_id", 1, buddy);
+    const query = buildUpdateByIDQuery<ReqModel>("request", "rq_id", 1, req);
 
     pgmock.add(query, ["number"], {
       rowCount: 1,
@@ -218,12 +203,12 @@ describe("Buddy API connection", () => {
 
     chai
       .request(app)
-      .put("/buddy/1")
-      .send(buddy)
+      .put("/request/1")
+      .send(req)
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
-        const resBody: HttpResponse<Buddy> = res.body; //type check
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(202);
         expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
@@ -232,18 +217,18 @@ describe("Buddy API connection", () => {
       });
   });
 
-  it("should successfully connect to API | DELETE /buddy/:id", (done: Done) => {
-    pgmock.add("DELETE FROM buddy WHERE b_id = $1;", ["number"], {
+  it("should successfully connect to API | DELETE /request/:id", (done: Done) => {
+    pgmock.add("DELETE FROM request WHERE rq_id = $1;", ["number"], {
       rowCount: 1,
     });
 
     chai
       .request(app)
-      .delete("/buddy/1")
+      .delete("/request/1")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
-        const resBody: HttpResponse<Buddy> = res.body; //type check
+        const resBody: HttpResponse<ReqModel> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(203);
         expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
@@ -252,22 +237,22 @@ describe("Buddy API connection", () => {
       });
   });
 
-  it("should give an error | GET /buddy 404", (done: Done) => {
-    pgmock.add("SELECT * FROM buddy", [], {
+  it("should give an error | GET /request 404", (done: Done) => {
+    pgmock.add("SELECT * FROM request", [], {
       rowCount: 0,
       rows: [],
     });
 
     chai
       .request(app)
-      .get("/buddy")
+      .get("/request")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
-        const resBody: HttpResponse<Buddy[]> = res.body; //type check
+        const resBody: HttpResponse<ReqModel[]> = res.body; //type check
         expect(resBody.success).to.be.false;
         expect(resBody.returnCode).to.be.eql(404);
-        expect(resBody.errors[0]).to.be.eql("Database has no buddies!");
+        expect(resBody.errors[0]).to.be.eql("Database has no requests!");
         done();
       });
   });

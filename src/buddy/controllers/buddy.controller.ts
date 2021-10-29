@@ -3,7 +3,7 @@ import { buildUpdateByIDQuery } from "../../common/tools/queryBuilder";
 import Buddy from "../../buddy/models/buddy.model";
 import HttpError from "../../common/models/error.model";
 import RequestController from "../controllers/request.controller";
-import ReqModel from "src/request/models/request.model";
+import ReqModel from "../models/request.model";
 
 export default class BuddyController {
   requestController: RequestController = new RequestController();
