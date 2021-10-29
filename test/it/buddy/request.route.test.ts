@@ -4,7 +4,7 @@ import PGMock2, { getPool } from "pgmock2";
 import RequestBuddyServer from "../../../src/buddy/api";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { Application } from "express";
+import { Application, request } from "express";
 import ReqModel from "../../../src/buddy/models/request.model";
 import HttpResponse from "../../../src/common/models/response.model";
 import { buildUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
@@ -34,6 +34,7 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request2: ReqModel = {
@@ -43,6 +44,7 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request3: ReqModel = {
@@ -52,6 +54,7 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     pgmock.add("SELECT * FROM request;", [], {
@@ -74,7 +77,7 @@ describe("Request API connection", () => {
       });
   });
 
-  it("should successfully connect to API | GET /request/is_fulfilled", (done: Done) => {
+  it("should successfully connect to API | GET /request/new/:id", (done: Done) => {
     const request1: ReqModel = {
       rq_id: 1,
       request_date: "",
@@ -82,41 +85,48 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request2: ReqModel = {
       rq_id: 2,
       request_date: "",
-      is_fulfilled: false,
+      is_fulfilled: true,
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request3: ReqModel = {
       rq_id: 3,
       request_date: "",
-      is_fulfilled: false,
+      is_fulfilled: true,
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
-    pgmock.add("SELECT * FROM request WHERE is_fulfilled = false;", [], {
-      rowCount: 2,
-      rows: [request2, request3],
-    });
+    pgmock.add(
+      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;",
+      [],
+      {
+        rowCount: 1,
+        rows: [request1],
+      }
+    );
 
     chai
       .request(app)
-      .get("/request/is_fulfilled")
+      .get("/request/new/1")
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
         if (err) done(err);
         const resBody: HttpResponse<ReqModel[]> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(200);
-        expect(resBody.rowCount).to.eql(2);
+        expect(resBody.rowCount).to.eql(1);
         expect(resBody.data).to.not.be.undefined;
         done();
       });
@@ -130,6 +140,7 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
@@ -160,16 +171,21 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5, $6);";
 
-    pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
-      rowCount: 1,
-    });
+    pgmock.add(
+      query,
+      ["string", "boolean", "string", "boolean", "boolean", "string"],
+      {
+        rowCount: 1,
+      }
+    );
 
     chai
       .request(app)
@@ -193,6 +209,7 @@ describe("Request API connection", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const query = buildUpdateByIDQuery<ReqModel>("request", "rq_id", 1, req);

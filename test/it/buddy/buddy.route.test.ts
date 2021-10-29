@@ -30,23 +30,20 @@ describe("Buddy API connection", () => {
   it("should successfully connect to API | GET /buddy", (done: Done) => {
     const buddy1: Buddy = {
       b_id: 1,
-      availability: "",
-      is_active: false,
       buddy_rating_avg: 0,
+      u_id: 0,
     };
 
     const buddy2: Buddy = {
       b_id: 2,
-      availability: "",
-      is_active: false,
       buddy_rating_avg: 0,
+      u_id: 0,
     };
 
     const buddy3: Buddy = {
       b_id: 3,
-      availability: "",
-      is_active: false,
       buddy_rating_avg: 0,
+      u_id: 0,
     };
 
     pgmock.add("SELECT * FROM buddy;", [], {
@@ -72,22 +69,22 @@ describe("Buddy API connection", () => {
   // it("should successfully connect to API | GET /buddy/active_buddies", (done: Done) => {
   //   const buddy1: Buddy = {
   //     b_id: 1,
-  //     availability: "",
+  //
   //     is_active: true,
   //     buddy_rating_avg: 0,
   //   };
 
   //   const buddy2: Buddy = {
   //     b_id: 2,
-  //     availability: "",
+  //
   //     is_active: true,
   //     buddy_rating_avg: 0,
   //   };
 
   //   const buddy3: Buddy = {
   //     b_id: 3,
-  //     availability: "",
-  //     is_active: false,
+  //
+  //
   //     buddy_rating_avg: 0,
   //   };
 
@@ -146,9 +143,8 @@ describe("Buddy API connection", () => {
   it("should successfully connect to API | GET /buddy/:id", (done: Done) => {
     const buddy: Buddy = {
       b_id: 1,
-      availability: "",
-      is_active: false,
       buddy_rating_avg: 0,
+      u_id: 0,
     };
 
     pgmock.add("SELECT * FROM buddy WHERE b_id = $1;", ["number"], {
@@ -173,17 +169,14 @@ describe("Buddy API connection", () => {
 
   it("should successfully connect to API | POST /buddy", (done: Done) => {
     const buddy: Buddy = {
-      availability: "",
-      is_active: false,
       buddy_rating_avg: 0,
+      u_id: 0,
     };
 
     const query =
-      "INSERT INTO buddy " +
-      "(availability, is_active, buddy_rating_avg) " +
-      "VALUES ($1, $2, $3);";
+      "INSERT INTO buddy " + "(u_id, buddy_rating_avg) " + "VALUES ($1, $2);";
 
-    pgmock.add(query, ["string", "boolean", "number"], {
+    pgmock.add(query, ["number", "number"], {
       rowCount: 1,
     });
 
@@ -205,9 +198,9 @@ describe("Buddy API connection", () => {
   it("should successfully connect to API | PUT /buddy/:id", (done: Done) => {
     const buddy: Buddy = {
       b_id: 1,
-      availability: "",
-      is_active: false,
+
       buddy_rating_avg: 0,
+      u_id: 0,
     };
 
     const query = buildUpdateByIDQuery<Buddy>("buddy", "b_id", 1, buddy);

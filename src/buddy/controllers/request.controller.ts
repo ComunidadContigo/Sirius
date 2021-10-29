@@ -18,7 +18,8 @@ export default class RequestController {
   }
 
   public async getRequestByisFulfilled(db: Pool): Promise<ReqModel[]> {
-    const query = "SELECT * FROM request WHERE is_fulfilled = false;";
+    const query =
+      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;";
     const queryResult: QueryResult<ReqModel> = await db.query(query);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No requests needs to be fulfilled right now.`);
@@ -36,13 +37,14 @@ export default class RequestController {
   public async createRequest(db: Pool, request: ReqModel): Promise<boolean> {
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5, $6);";
     const queryResult: QueryResult = await db.query(query, [
       request.request_date,
       request.is_fulfilled || false,
       request.request_meeting_point,
       request.is_urgent || false,
+      request.is_in_progress || false,
       request.request_destination,
     ]);
     return queryResult.rowCount == 1;
@@ -71,5 +73,22 @@ export default class RequestController {
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No request found with id = ${id}`);
     return queryResult.rowCount === 1;
+  }
+
+  public async findNewEligibleRequests(
+    db: Pool,
+    id: number
+  ): Promise<ReqModel[]> {
+    //Check if there are requests to be fulfilled.
+    const query =
+      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;";
+    const queryResult: QueryResult<ReqModel> = await db.query(query);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No requests needs to be fulfilled right now.`);
+
+    //Geolocation implementation goes here. Not yet tho
+    //Here we access the user location
+
+    return queryResult.rows;
   }
 }

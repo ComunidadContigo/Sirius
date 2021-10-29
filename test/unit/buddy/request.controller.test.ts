@@ -25,6 +25,7 @@ describe("Request Controller", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request2: ReqModel = {
@@ -34,6 +35,7 @@ describe("Request Controller", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request3: ReqModel = {
@@ -43,6 +45,7 @@ describe("Request Controller", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     pgmock.add("SELECT * FROM request;", [], {
@@ -75,6 +78,7 @@ describe("Request Controller", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
@@ -104,16 +108,21 @@ describe("Request Controller", () => {
       request_meeting_point: "",
       is_urgent: true,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5, $6);";
 
-    pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
-      rowCount: 1,
-    });
+    pgmock.add(
+      query,
+      ["string", "boolean", "string", "boolean", "boolean", "string"],
+      {
+        rowCount: 1,
+      }
+    );
 
     rc.createRequest(pool, request).then(
       (success: boolean) => {
@@ -137,6 +146,7 @@ describe("Request Controller", () => {
       request_meeting_point: "",
       is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const query = buildUpdateByIDQuery<ReqModel>(

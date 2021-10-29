@@ -9,5 +9,6 @@ export default function api_router(): Router {
   });
   router.use("/request", RequestRouter());
   router.use("/buddy", BuddyRouter());
+  router.use("/requester", RequestRouter());
   return router;
 }

@@ -1,19 +1,3 @@
-CREATE TABLE buddy
-(
-  availability VARCHAR(100) NOT NULL,
-  is_active BOOLEAN NOT NULL,
-  b_id SERIAL PRIMARY KEY,
-  buddy_rating_avg FLOAT NOT NULL,
-  last_location VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE requester
-(
-  scheduled_request DATE,
-  r_id SERIAL PRIMARY KEY,
-  requester_rating_avg FLOAT NOT NULL
-);
-
 CREATE TABLE "user"
 (
   email VARCHAR(100) NOT NULL,
@@ -25,13 +9,25 @@ CREATE TABLE "user"
   gender VARCHAR(30) NOT NULL,
   u_id SERIAL PRIMARY KEY,
   user_last_location VARCHAR(100),
-  is_vetted BOOLEAN,
-  b_id INT,
-  r_id INT,
-  FOREIGN KEY (b_id) REFERENCES buddy(b_id),
-  FOREIGN KEY (r_id) REFERENCES requester(r_id),
+  is_vetted BOOLEAN NOT NULL,
   UNIQUE (email),
   UNIQUE (phone_number)
+);
+
+CREATE TABLE buddy
+(
+  b_id SERIAL PRIMARY KEY,
+  buddy_rating_avg FLOAT NOT NULL,
+  u_id INT NOT NULL,
+  FOREIGN KEY (u_id) REFERENCES "user"(u_id)
+);
+
+CREATE TABLE requester
+(
+  r_id SERIAL PRIMARY KEY,
+  requester_rating_avg FLOAT NOT NULL,
+  u_id INT NOT NULL,
+  FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );
 
 CREATE TABLE request
@@ -42,7 +38,7 @@ CREATE TABLE request
   is_urgent BOOLEAN NOT NULL,
   is_in_progress BOOLEAN NOT NULL,
   request_destination VARCHAR(100) NOT NULL,
-  r_id INT,
+  r_id INT NOT NULL,
   b_id INT,
   rq_id SERIAL PRIMARY KEY,
   FOREIGN KEY (r_id) REFERENCES requester(r_id),

@@ -57,9 +57,9 @@ export default function RequestRouter(): Router {
    * GET /request/isfulfilled
    * Returns all requests that need to be fulfilled.
    */
-  router.get("/is_fulfilled", AuthMiddleware, (req: Request, res: Response) => {
+  router.get("/new/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    requestController.getRequestByisFulfilled(db).then(
+    requestController.findNewEligibleRequests(db, +req.params.id).then(
       (requests: ReqModel[]) => {
         const response: HttpResponse<ReqModel[]> = {
           success: true,
