@@ -8,7 +8,7 @@ export default interface User {
   gender: string;
   last_name: string;
   user_last_location?: string;
-  isVetted?: boolean;
+  is_vetted?: boolean;
   b_id?: number;
   r_id?: number;
 }
