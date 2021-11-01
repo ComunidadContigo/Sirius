@@ -1,5 +1,5 @@
 import { Pool, QueryResult } from "pg";
-import { buildRequestUpdateByIDQuery } from "../../common/tools/queryBuilder";
+import { buildUpdateByIDQuery } from "../../common/tools/queryBuilder";
 import ReqModel from "../models/request.model";
 import HttpError from "../../common/models/error.model";
 
@@ -17,6 +17,15 @@ export default class RequestController {
     return queryResult.rows;
   }
 
+  public async getRequestByisFulfilled(db: Pool): Promise<ReqModel[]> {
+    const query =
+      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;";
+    const queryResult: QueryResult<ReqModel> = await db.query(query);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No requests needs to be fulfilled right now.`);
+    return queryResult.rows;
+  }
+
   public async getRequestByID(db: Pool, id: number): Promise<ReqModel> {
     const query = "SELECT * FROM request WHERE rq_id = $1;";
     const queryResult: QueryResult<ReqModel> = await db.query(query, [id]);
@@ -28,13 +37,14 @@ export default class RequestController {
   public async createRequest(db: Pool, request: ReqModel): Promise<boolean> {
     const query =
       "INSERT INTO request " +
-      "(request_date, isFulfilled, request_meeting_point, isUrgent, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5, $6);";
     const queryResult: QueryResult = await db.query(query, [
       request.request_date,
-      request.isFulfilled || false,
+      request.is_fulfilled || false,
       request.request_meeting_point,
-      request.isUrgent || false,
+      request.is_urgent || false,
+      request.is_in_progress || false,
       request.request_destination,
     ]);
     return queryResult.rowCount == 1;
@@ -45,7 +55,12 @@ export default class RequestController {
     id: number,
     request: ReqModel
   ): Promise<boolean> {
-    const query = buildRequestUpdateByIDQuery<ReqModel>("request", id, request);
+    const query = buildUpdateByIDQuery<ReqModel>(
+      "request",
+      "rq_id",
+      id,
+      request
+    );
     const queryResult: QueryResult = await db.query(query);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No request found with id = ${id}`);
@@ -58,5 +73,22 @@ export default class RequestController {
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No request found with id = ${id}`);
     return queryResult.rowCount === 1;
+  }
+
+  public async findNewEligibleRequests(
+    db: Pool,
+    id: number
+  ): Promise<ReqModel[]> {
+    //Check if there are requests to be fulfilled.
+    const query =
+      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;";
+    const queryResult: QueryResult<ReqModel> = await db.query(query);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No requests needs to be fulfilled right now.`);
+
+    //Geolocation implementation goes here. Not yet tho
+    //Here we access the user location
+
+    return queryResult.rows;
   }
 }

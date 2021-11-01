@@ -4,7 +4,7 @@ import api_router from "./routes/router";
 import environmentConfig from "../common/config/environment.config";
 import { Pool } from "pg";
 
-export default function BuddyServer(dbPool: Pool): express.Application {
+export default function RequestBuddyServer(dbPool: Pool): express.Application {
   const app: express.Application = express();
 
   // set up DB connection

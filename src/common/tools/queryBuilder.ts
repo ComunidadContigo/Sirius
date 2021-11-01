@@ -16,8 +16,9 @@ export function buildUserUpdateByIDQuery<E>(
   return query;
 }
 
-export function buildRequestUpdateByIDQuery<E>(
+export function buildUpdateByIDQuery<E>(
   table: string,
+  t_id: string,
   id: number,
   dataToUpdate: E
 ): string {
@@ -30,6 +31,6 @@ export function buildRequestUpdateByIDQuery<E>(
     query += columnsToUpdate[i] + ", ";
   }
   query += columnsToUpdate[i];
-  query += ` WHERE rq_id = ${id}`;
+  query += ` WHERE ${t_id} = ${id}`;
   return query;
 }

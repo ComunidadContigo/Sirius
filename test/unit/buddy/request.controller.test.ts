@@ -3,8 +3,8 @@ import { Done } from "mocha";
 import PGMock2, { getPool } from "pgmock2";
 import { Pool } from "pg";
 import RequestController from "../../../src/buddy/controllers/request.controller";
+import { buildUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
 import ReqModel from "../../../src/buddy/models/request.model";
-import { buildRequestUpdateByIDQuery } from "../../../src/common/tools/queryBuilder";
 import HttpError from "../../../src/common/models/error.model";
 
 describe("Request Controller", () => {
@@ -21,28 +21,31 @@ describe("Request Controller", () => {
     const request1: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request2: ReqModel = {
       rq_id: 2,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const request3: ReqModel = {
       rq_id: 3,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     pgmock.add("SELECT * FROM request;", [], {
@@ -71,10 +74,11 @@ describe("Request Controller", () => {
     const request: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
     pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
@@ -100,20 +104,25 @@ describe("Request Controller", () => {
     const request: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: true,
+      is_urgent: true,
       request_destination: "",
+      is_in_progress: false,
     };
 
     const query =
       "INSERT INTO request " +
-      "(request_date, isFulfilled, request_meeting_point, isUrgent, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
+      "VALUES ($1, $2, $3, $4, $5, $6);";
 
-    pgmock.add(query, ["string", "boolean", "string", "boolean", "string"], {
-      rowCount: 1,
-    });
+    pgmock.add(
+      query,
+      ["string", "boolean", "string", "boolean", "boolean", "string"],
+      {
+        rowCount: 1,
+      }
+    );
 
     rc.createRequest(pool, request).then(
       (success: boolean) => {
@@ -133,13 +142,19 @@ describe("Request Controller", () => {
     const request: ReqModel = {
       rq_id: 1,
       request_date: "",
-      isFulfilled: false,
+      is_fulfilled: false,
       request_meeting_point: "",
-      isUrgent: false,
+      is_urgent: false,
       request_destination: "",
+      is_in_progress: false,
     };
 
-    const query = buildRequestUpdateByIDQuery<ReqModel>("request", 1, request);
+    const query = buildUpdateByIDQuery<ReqModel>(
+      "request",
+      "rq_id",
+      1,
+      request
+    );
 
     pgmock.add(query, [], {
       rowCount: 1,

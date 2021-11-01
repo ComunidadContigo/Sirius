@@ -118,7 +118,6 @@ describe("User Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     const user: User = {
-      u_id: 1,
       email: "test@test.com",
       password: "test",
       phone_number: "test",

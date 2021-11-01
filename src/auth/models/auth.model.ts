@@ -3,7 +3,7 @@ export interface RefreshTokenPayload {
   email: string;
   first_name: string;
   last_name: string;
-  isVetted: boolean;
+  is_vetted: boolean;
   b_id: number;
   r_id: number;
 }

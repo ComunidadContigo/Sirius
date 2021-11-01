@@ -114,14 +114,16 @@ describe("User API connection", () => {
 
   it("should successfully connect to API | POST /user", (done: Done) => {
     const user: User = {
-      u_id: 1,
       email: "test@test.com",
       password: "test",
       phone_number: "test",
       birth_date: "1/1/1970",
-      first_name: "",
-      gender: "",
-      last_name: "",
+      first_name: "asdf",
+      last_name: "asdf",
+      is_vetted: false,
+      b_id: 0,
+      r_id: 0,
+      gender: "asdf",
     };
 
     const query =
