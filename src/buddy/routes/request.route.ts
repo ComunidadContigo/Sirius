@@ -53,9 +53,9 @@ export default function RequestRouter(): Router {
   });
 
   /**
-   * Get Request by isFulfilled
-   * GET /request/isfulfilled
-   * Returns all requests that need to be fulfilled.
+   * Get Request that are not complete.
+   * GET /request/new/:id
+   * Returns all requests that are not complete.
    */
   router.get("/new/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
