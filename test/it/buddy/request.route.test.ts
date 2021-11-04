@@ -74,57 +74,53 @@ describe("Request API connection", () => {
       });
   });
 
-  // it("should successfully connect to API | GET /request/new/:id", (done: Done) => {
-  //   const request1: ReqModel = {
-  //     rq_id: 1,
-  //     request_date: "",
-  //     request_meeting_point: "",
-  //     request_destination: "",
-  //     r_id: 0,
-  //     stat: "",
-  //   };
+  it("should successfully connect to API | GET /request/new/:id", (done: Done) => {
+    const request1: ReqModel = {
+      rq_id: 1,
+      request_date: "",
+      request_meeting_point: "",
+      request_destination: "",
+      r_id: 0,
+      stat: "",
+    };
 
-  //   const request2: ReqModel = {
-  //     rq_id: 2,
-  //     request_date: "",
-  //     request_meeting_point: "",
-  //     request_destination: "",
-  //     r_id: 0,
-  //     stat: "",
-  //   };
+    const request2: ReqModel = {
+      rq_id: 2,
+      request_date: "",
+      request_meeting_point: "",
+      request_destination: "",
+      r_id: 0,
+      stat: "",
+    };
 
-  //   const request3: ReqModel = {
-  //     rq_id: 3,
-  //     request_date: "",
-  //     request_meeting_point: "",
-  //     request_destination: "",
-  //     r_id: 0,
-  //     stat: "",
-  //   };
+    const request3: ReqModel = {
+      rq_id: 3,
+      request_date: "",
+      request_meeting_point: "",
+      request_destination: "",
+      r_id: 0,
+      stat: "",
+    };
 
-  //   pgmock.add(
-  //     "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;",
-  //     [],
-  //     {
-  //       rowCount: 1,
-  //       rows: [request1],
-  //     }
-  //   );
+    pgmock.add("SELECT * FROM request WHERE stat = '' and b_id = null;", [], {
+      rowCount: 1,
+      rows: [request1],
+    });
 
-  //   chai
-  //     .request(app)
-  //     .get("/request/new/1")
-  //     .set({ Authorization: `Bearer ${accessToken}` })
-  //     .end((err, res) => {
-  //       if (err) done(err);
-  //       const resBody: HttpResponse<ReqModel[]> = res.body; //type check
-  //       expect(resBody.success).to.be.true;
-  //       expect(resBody.returnCode).to.be.eql(200);
-  //       expect(resBody.rowCount).to.eql(1);
-  //       expect(resBody.data).to.not.be.undefined;
-  //       done();
-  //     });
-  // });
+    chai
+      .request(app)
+      .get("/request/new/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<ReqModel[]> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(200);
+        expect(resBody.rowCount).to.eql(1);
+        expect(resBody.data).to.not.be.undefined;
+        done();
+      });
+  });
 
   it("should successfully connect to API | GET /request/:id", (done: Done) => {
     const req: ReqModel = {
