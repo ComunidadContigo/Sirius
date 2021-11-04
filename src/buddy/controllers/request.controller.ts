@@ -37,8 +37,8 @@ export default class RequestController {
   public async createRequest(db: Pool, request: ReqModel): Promise<boolean> {
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5, $6);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination, r_id) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7);";
     const queryResult: QueryResult = await db.query(query, [
       request.request_date,
       request.is_fulfilled || false,
@@ -46,6 +46,7 @@ export default class RequestController {
       request.is_urgent || false,
       request.is_in_progress || false,
       request.request_destination,
+      request.r_id,
     ]);
     return queryResult.rowCount == 1;
   }

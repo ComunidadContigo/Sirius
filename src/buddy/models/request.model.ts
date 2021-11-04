@@ -6,6 +6,6 @@ export default interface ReqModel {
   request_meeting_point: string;
   is_urgent: boolean;
   request_destination: string;
-  r_id?: number;
+  r_id: number;
   b_id?: number;
 }

@@ -35,6 +35,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     const request2: ReqModel = {
@@ -45,6 +46,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     const request3: ReqModel = {
@@ -55,6 +57,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     pgmock.add("SELECT * FROM request;", [], {
@@ -86,6 +89,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     const request2: ReqModel = {
@@ -96,6 +100,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     const request3: ReqModel = {
@@ -106,6 +111,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     pgmock.add(
@@ -141,6 +147,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
@@ -172,16 +179,17 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5, $6);";
+      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination, r_id) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
     pgmock.add(
       query,
-      ["string", "boolean", "string", "boolean", "boolean", "string"],
+      ["string", "boolean", "string", "boolean", "boolean", "string", "number"],
       {
         rowCount: 1,
       }
@@ -210,6 +218,7 @@ describe("Request API connection", () => {
       is_urgent: false,
       request_destination: "",
       is_in_progress: false,
+      r_id: 0,
     };
 
     const query = buildUpdateByIDQuery<ReqModel>("request", "rq_id", 1, req);
