@@ -264,4 +264,31 @@ describe("Buddy API connection", () => {
         done();
       });
   });
+
+  it("should successfully connect to API | GET /buddy/:id", (done: Done) => {
+    const buddy: Buddy = {
+      b_id: 1,
+      buddy_rating_avg: 0,
+      u_id: 0,
+    };
+
+    pgmock.add("SELECT * FROM buddy WHERE u_id = $1;", ["number"], {
+      rowCount: 1,
+      rows: [buddy],
+    });
+
+    chai
+      .request(app)
+      .get("/buddy/user/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<Buddy> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(200);
+        expect(resBody.rowCount).to.be.undefined; // get buddy by id does not return rowCount
+        expect(resBody.data).to.not.be.undefined;
+        done();
+      });
+  });
 });

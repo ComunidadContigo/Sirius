@@ -176,4 +176,30 @@ describe("Buddy Controller", () => {
       }
     );
   });
+
+  it("should be able to get buddy by user ID", (done: Done) => {
+    const bc: BuddyController = new BuddyController();
+    const pool: Pool = getPool(pgmock);
+
+    const buddy: Buddy = {
+      b_id: 1,
+      buddy_rating_avg: 0,
+      u_id: 0,
+    };
+
+    pgmock.add("SELECT * FROM buddy WHERE u_id = $1;", ["number"], {
+      rowCount: 1,
+      rows: [buddy],
+    });
+
+    bc.getBuddyByUID(pool, 1).then(
+      (buddy: Buddy) => {
+        expect(buddy).to.have.property("b_id", 1);
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
 });

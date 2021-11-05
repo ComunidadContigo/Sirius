@@ -176,4 +176,30 @@ describe("Requester Controller", () => {
       }
     );
   });
+
+  it("should be able to get requester by user ID", (done: Done) => {
+    const bc: RequesterController = new RequesterController();
+    const pool: Pool = getPool(pgmock);
+
+    const requester: Requester = {
+      r_id: 1,
+      requester_rating_avg: 0,
+      u_id: 1,
+    };
+
+    pgmock.add("SELECT * FROM requester WHERE u_id = $1;", ["number"], {
+      rowCount: 1,
+      rows: [requester],
+    });
+
+    bc.getRequesterByUID(pool, 1).then(
+      (requester: Requester) => {
+        expect(requester).to.have.property("u_id", 1);
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
 });

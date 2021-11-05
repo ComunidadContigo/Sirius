@@ -91,6 +91,41 @@ export default function RequesterRouter(): Router {
     );
   });
 
+  router.get("/user/:id", AuthMiddleware, (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    requesterController.getRequesterByUID(db, +req.params.id).then(
+      (reqmod: Requester) => {
+        const response: HttpResponse<Requester> = {
+          success: true,
+          returnCode: 200,
+          messages: [],
+          errors: [],
+          data: reqmod,
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
   /**
    * Create Requester
    * POST /requester

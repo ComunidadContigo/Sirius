@@ -208,5 +208,40 @@ export default function BuddyRouter(): Router {
     );
   });
 
+  router.get("/user/:id", AuthMiddleware, (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    buddyController.getBuddyByUID(db, +req.params.id).then(
+      (reqmod: Buddy) => {
+        const response: HttpResponse<Buddy> = {
+          success: true,
+          returnCode: 200,
+          messages: [],
+          errors: [],
+          data: reqmod,
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
   return router;
 }

@@ -67,4 +67,12 @@ export default class RequesterController {
       throw new HttpError(404, `No requester found with id = ${id}`);
     return queryResult.rowCount === 1;
   }
+
+  public async getRequesterByUID(db: Pool, u_id: number): Promise<Requester> {
+    const query = "SELECT * FROM requester WHERE u_id = $1;";
+    const queryResult: QueryResult<Requester> = await db.query(query, [u_id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No requester found with id = ${u_id}`);
+    return queryResult.rows[0];
+  }
 }

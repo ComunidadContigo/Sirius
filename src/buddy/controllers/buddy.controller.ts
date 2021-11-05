@@ -57,4 +57,12 @@ export default class BuddyController {
       throw new HttpError(404, `No buddy found with id = ${id}`);
     return queryResult.rowCount === 1;
   }
+
+  public async getBuddyByUID(db: Pool, u_id: number): Promise<Buddy> {
+    const query = "SELECT * FROM buddy WHERE u_id = $1;";
+    const queryResult: QueryResult<Buddy> = await db.query(query, [u_id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No buddy found with id = ${u_id}`);
+    return queryResult.rows[0];
+  }
 }
