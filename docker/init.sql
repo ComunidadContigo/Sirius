@@ -33,11 +33,8 @@ CREATE TABLE requester
 CREATE TABLE request
 (
   request_date VARCHAR(100) NOT NULL,
-  is_fulfilled BOOLEAN NOT NULL,
   request_meeting_point VARCHAR(100) NOT NULL,
-  is_urgent BOOLEAN NOT NULL,
-  is_in_progress BOOLEAN NOT NULL,
-  request_destination VARCHAR(100) NOT NULL,
+  stat VARCHAR(100) NOT NULL,
   r_id INT NOT NULL,
   b_id INT,
   rq_id SERIAL PRIMARY KEY,

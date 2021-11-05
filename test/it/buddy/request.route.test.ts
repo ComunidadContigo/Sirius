@@ -30,31 +30,28 @@ describe("Request API connection", () => {
     const request1: ReqModel = {
       rq_id: 1,
       request_date: "",
-      is_fulfilled: true,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     const request2: ReqModel = {
       rq_id: 2,
       request_date: "",
-      is_fulfilled: false,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     const request3: ReqModel = {
       rq_id: 3,
       request_date: "",
-      is_fulfilled: false,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     pgmock.add("SELECT * FROM request;", [], {
@@ -81,41 +78,34 @@ describe("Request API connection", () => {
     const request1: ReqModel = {
       rq_id: 1,
       request_date: "",
-      is_fulfilled: true,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     const request2: ReqModel = {
       rq_id: 2,
       request_date: "",
-      is_fulfilled: true,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     const request3: ReqModel = {
       rq_id: 3,
       request_date: "",
-      is_fulfilled: true,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
-    pgmock.add(
-      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;",
-      [],
-      {
-        rowCount: 1,
-        rows: [request1],
-      }
-    );
+    pgmock.add("SELECT * FROM request WHERE stat = '' and b_id = null;", [], {
+      rowCount: 1,
+      rows: [request1],
+    });
 
     chai
       .request(app)
@@ -136,11 +126,10 @@ describe("Request API connection", () => {
     const req: ReqModel = {
       rq_id: 1,
       request_date: "",
-      is_fulfilled: false,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     pgmock.add("SELECT * FROM request WHERE rq_id = $1;", ["number"], {
@@ -167,25 +156,20 @@ describe("Request API connection", () => {
     const req: ReqModel = {
       rq_id: 1,
       request_date: "",
-      is_fulfilled: true,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5, $6);";
+      "(request_date, request_meeting_point, stat, request_destination, r_id) " +
+      "VALUES ($1, $2, $3, $4, $5);";
 
-    pgmock.add(
-      query,
-      ["string", "boolean", "string", "boolean", "boolean", "string"],
-      {
-        rowCount: 1,
-      }
-    );
+    pgmock.add(query, ["string", "string", "string", "string", "number"], {
+      rowCount: 1,
+    });
 
     chai
       .request(app)
@@ -205,11 +189,10 @@ describe("Request API connection", () => {
   it("should successfully connect to API | PUT /request/:id", (done: Done) => {
     const req: ReqModel = {
       request_date: "",
-      is_fulfilled: true,
       request_meeting_point: "",
-      is_urgent: false,
       request_destination: "",
-      is_in_progress: false,
+      r_id: 0,
+      stat: "",
     };
 
     const query = buildUpdateByIDQuery<ReqModel>("request", "rq_id", 1, req);

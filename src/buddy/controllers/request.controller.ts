@@ -18,8 +18,7 @@ export default class RequestController {
   }
 
   public async getRequestByisFulfilled(db: Pool): Promise<ReqModel[]> {
-    const query =
-      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;";
+    const query = "SELECT * FROM request WHERE stat = '' and b_id = null;";
     const queryResult: QueryResult<ReqModel> = await db.query(query);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No requests needs to be fulfilled right now.`);
@@ -37,15 +36,14 @@ export default class RequestController {
   public async createRequest(db: Pool, request: ReqModel): Promise<boolean> {
     const query =
       "INSERT INTO request " +
-      "(request_date, is_fulfilled, request_meeting_point, is_urgent, is_in_progress, request_destination) " +
-      "VALUES ($1, $2, $3, $4, $5, $6);";
+      "(request_date, request_meeting_point, stat, request_destination, r_id) " +
+      "VALUES ($1, $2, $3, $4, $5);";
     const queryResult: QueryResult = await db.query(query, [
       request.request_date,
-      request.is_fulfilled || false,
       request.request_meeting_point,
-      request.is_urgent || false,
-      request.is_in_progress || false,
+      request.stat,
       request.request_destination,
+      request.r_id,
     ]);
     return queryResult.rowCount == 1;
   }
@@ -80,8 +78,7 @@ export default class RequestController {
     id: number
   ): Promise<ReqModel[]> {
     //Check if there are requests to be fulfilled.
-    const query =
-      "SELECT * FROM request WHERE is_fulfilled = false and is_in_progress = false and b_id = null;";
+    const query = "SELECT * FROM request WHERE stat = '' and b_id = null;";
     const queryResult: QueryResult<ReqModel> = await db.query(query);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No requests needs to be fulfilled right now.`);
