@@ -3,6 +3,10 @@ import bcrypt from "bcrypt";
 import { buildUserUpdateByIDQuery } from "../../common/tools/queryBuilder";
 import User from "../models/user.model";
 import HttpError from "../../common/models/error.model";
+import RequesterController from "../../buddy/controllers/requester.controller";
+import BuddyController from "../../buddy/controllers/buddy.controller";
+import Requester from "../../buddy/models/requester.model";
+import Buddy from "../../buddy/models/buddy.model";
 
 export default class UserController {
   private saltRounds = 10;
@@ -94,5 +98,28 @@ export default class UserController {
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No user found with id = ${id}`);
     return queryResult.rowCount === 1;
+  }
+
+  public async vettingProcessComplete(db: Pool, id: number): Promise<boolean> {
+    const query = 'UPDATE "user" SET is_vetted = true WHERE u_id = $1';
+    const queryResult: QueryResult = await db.query(query, [id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No user found with id = ${id}`);
+    const rc: RequesterController = new RequesterController();
+    const bc: BuddyController = new BuddyController();
+
+    const requester: Requester = {
+      requester_rating_avg: 0,
+      u_id: id,
+    };
+
+    const buddy: Buddy = {
+      buddy_rating_avg: 0,
+      u_id: id,
+    };
+
+    const createdRequester = await rc.createRequester(db, requester);
+    const createdBuddy = await bc.createBuddy(db, buddy);
+    return createdRequester && createdBuddy;
   }
 }

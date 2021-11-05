@@ -33,7 +33,7 @@ export default class BuddyController {
       "INSERT INTO buddy " + "(u_id, buddy_rating_avg) " + "VALUES ($1, $2);";
     const queryResult: QueryResult = await db.query(query, [
       buddy.u_id,
-      buddy.buddy_rating_avg,
+      buddy.buddy_rating_avg || 0,
     ]);
     return queryResult.rowCount == 1;
   }

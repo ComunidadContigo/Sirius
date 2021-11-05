@@ -38,7 +38,7 @@ export default class RequesterController {
       "VALUES ($1, $2);";
     const queryResult: QueryResult = await db.query(query, [
       requester.u_id,
-      requester.requester_rating_avg,
+      requester.requester_rating_avg || 0,
     ]);
     return queryResult.rowCount == 1;
   }

@@ -242,4 +242,45 @@ describe("User API connection", () => {
         done();
       });
   });
+
+  it("should successfully connect to API | PUT /user/vetted/:id", (done: Done) => {
+    pgmock.add(
+      'UPDATE "user" SET is_vetted = true WHERE u_id = $1',
+      ["number"],
+      {
+        rowCount: 1,
+        rows: [],
+      }
+    );
+
+    const queryRequester =
+      "INSERT INTO requester " +
+      "(u_id, requester_rating_avg) " +
+      "VALUES ($1, $2);";
+
+    pgmock.add(queryRequester, ["number", "number"], {
+      rowCount: 1,
+    });
+
+    const queryBuddy =
+      "INSERT INTO buddy " + "(u_id, buddy_rating_avg) " + "VALUES ($1, $2);";
+
+    pgmock.add(queryBuddy, ["number", "number"], {
+      rowCount: 1,
+    });
+
+    chai
+      .request(app)
+      .put("/vetted/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(202);
+        expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
+        expect(resBody.data).to.be.undefined; // this route does not return data
+        done();
+      });
+  });
 });
