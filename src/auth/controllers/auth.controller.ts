@@ -17,14 +17,21 @@ export default class AuthController {
     const user: User = await uc.getUserByEmail(db, email);
     const verifyPassword = await bcrypt.compare(password, user.password);
     if (verifyPassword) {
+      const findTokenQuery = "SELECT token FROM refreshtoken WHERE u_id = $1";
+      const findTokenRes = await db.query(findTokenQuery, [user.u_id]);
+      if (findTokenRes.rowCount > 0) {
+        return {
+          u_id: user.u_id!,
+          token: findTokenRes.rows[0],
+        };
+      }
+      // didn't find a token, so create a new one.
       const payload: RefreshTokenPayload = {
         u_id: user.u_id!,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
         is_vetted: user.is_vetted!,
-        b_id: user.b_id!,
-        r_id: user.r_id!,
       };
       const token = jwt.sign(payload, environmentConfig.secret_key_refresh, {
         expiresIn: "1y",

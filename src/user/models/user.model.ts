@@ -9,6 +9,4 @@ export default interface User {
   last_name: string;
   user_last_location?: string;
   is_vetted?: boolean;
-  b_id?: number;
-  r_id?: number;
 }
