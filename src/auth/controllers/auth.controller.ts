@@ -84,4 +84,21 @@ export default class AuthController {
       throw new HttpError(404, `No refresh token found with u_id = ${id}`);
     return true;
   }
+
+  public async saveExpoToken(
+    db: Pool,
+    expo_push_token: string,
+    id: number
+  ): Promise<boolean> {
+    const query =
+      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2";
+
+    const queryResult: QueryResult = await db.query(query, [
+      expo_push_token,
+      id,
+    ]);
+    if (queryResult.rowCount < 1)
+      throw new HttpError(404, `No refresh token found with u_id = ${id}`);
+    return true;
+  }
 }

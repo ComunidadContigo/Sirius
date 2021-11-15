@@ -125,4 +125,25 @@ describe("Auth Controller", () => {
       }
     );
   });
+
+  it("should be able to save the Expo Push Token", (done: Done) => {
+    const dbPool: Pool = getPool(pgmock);
+    const ac: AuthController = new AuthController();
+    pgmock.add(
+      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2",
+      ["string", "number"],
+      {
+        rowCount: 1,
+      }
+    );
+    ac.saveExpoToken(dbPool, "ExpoPushToken[asdfasdfasdf]", 1).then(
+      (success: boolean) => {
+        expect(success).to.be.true;
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
 });

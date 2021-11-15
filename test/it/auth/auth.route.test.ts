@@ -20,6 +20,10 @@ describe("Auth API Connection", () => {
   const dbPool: Pool = getPool(pgmock);
   chai.use(chaiHttp);
   const app: Application = AuthServer(dbPool);
+  const accessToken = jwt.sign(
+    { message: "Verified!" },
+    environment.secret_key_access
+  );
 
   it("should successfully connect to API | POST /login", (done: Done) => {
     const person: User = {
@@ -119,6 +123,28 @@ describe("Auth API Connection", () => {
         expect(data.first_name).to.eql(person.first_name);
         expect(data.last_name).to.eql(person.last_name);
         expect(data.is_vetted).to.be.eql(person.is_vetted);
+        done();
+      });
+  });
+
+  it("should successfully connect to API | PUT /expo/:id", (done: Done) => {
+    pgmock.add(
+      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2",
+      ["string", "number"],
+      {
+        rowCount: 1,
+      }
+    );
+
+    chai
+      .request(app)
+      .put("/expo/1")
+      .send({ token: "ExpoPushToken[asdfasdf]" })
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse = res.body;
+        expect(resBody.success).to.be.true;
         done();
       });
   });
