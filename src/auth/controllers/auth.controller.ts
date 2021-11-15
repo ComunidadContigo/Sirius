@@ -17,14 +17,24 @@ export default class AuthController {
     const user: User = await uc.getUserByEmail(db, email);
     const verifyPassword = await bcrypt.compare(password, user.password);
     if (verifyPassword) {
+      const findTokenQuery = "SELECT * FROM refreshtoken WHERE u_id = $1";
+      const findTokenRes = await db.query<RefreshToken>(findTokenQuery, [
+        user.u_id,
+      ]);
+      if (findTokenRes.rowCount > 0) {
+        const token = findTokenRes.rows[0].token;
+        return {
+          u_id: user.u_id!,
+          token: token,
+        };
+      }
+      // didn't find a token, so create a new one.
       const payload: RefreshTokenPayload = {
         u_id: user.u_id!,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
         is_vetted: user.is_vetted!,
-        b_id: user.b_id!,
-        r_id: user.r_id!,
       };
       const token = jwt.sign(payload, environmentConfig.secret_key_refresh, {
         expiresIn: "1y",
@@ -70,6 +80,23 @@ export default class AuthController {
   public async logout(db: Pool, id: number): Promise<boolean> {
     const query = `DELETE FROM refreshtoken WHERE u_id = ${id}`;
     const queryResult: QueryResult = await db.query(query);
+    if (queryResult.rowCount < 1)
+      throw new HttpError(404, `No refresh token found with u_id = ${id}`);
+    return true;
+  }
+
+  public async saveExpoToken(
+    db: Pool,
+    expo_push_token: string,
+    id: number
+  ): Promise<boolean> {
+    const query =
+      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2";
+
+    const queryResult: QueryResult = await db.query(query, [
+      expo_push_token,
+      id,
+    ]);
     if (queryResult.rowCount < 1)
       throw new HttpError(404, `No refresh token found with u_id = ${id}`);
     return true;

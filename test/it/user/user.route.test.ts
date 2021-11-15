@@ -121,8 +121,6 @@ describe("User API connection", () => {
       first_name: "asdf",
       last_name: "asdf",
       is_vetted: false,
-      b_id: 0,
-      r_id: 0,
       gender: "asdf",
     };
 

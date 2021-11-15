@@ -4,6 +4,7 @@ import HttpError from "../../common/models/error.model";
 import HttpResponse from "../../common/models/response.model";
 import AuthController from "../../auth/controllers/auth.controller";
 import { RefreshToken } from "../models/auth.model";
+import authMiddleware from "../../common/middleware/auth.middleware";
 
 export default function AuthRouter(): Router {
   const authController: AuthController = new AuthController();
@@ -92,6 +93,40 @@ export default function AuthRouter(): Router {
           messages: ["Access token granted."],
           errors: [],
           data: token,
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
+  router.put("/expo/:id", authMiddleware, (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    authController.saveExpoToken(db, req.body.token, +req.params.id).then(
+      (success: boolean) => {
+        const response: HttpResponse = {
+          success: success,
+          returnCode: 201,
+          messages: ["Expo Push Token saved."],
+          errors: [],
         };
         res.status(response.returnCode).send(response);
       },

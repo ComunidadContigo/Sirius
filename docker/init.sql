@@ -60,5 +60,6 @@ CREATE TABLE refreshtoken
 (
   token VARCHAR(512) NOT NULL,
   u_id INT NOT NULL,
+  expo_push_token VARCHAR(512),
   FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );
