@@ -17,12 +17,15 @@ export default class AuthController {
     const user: User = await uc.getUserByEmail(db, email);
     const verifyPassword = await bcrypt.compare(password, user.password);
     if (verifyPassword) {
-      const findTokenQuery = "SELECT token FROM refreshtoken WHERE u_id = $1";
-      const findTokenRes = await db.query(findTokenQuery, [user.u_id]);
+      const findTokenQuery = "SELECT * FROM refreshtoken WHERE u_id = $1";
+      const findTokenRes = await db.query<RefreshToken>(findTokenQuery, [
+        user.u_id,
+      ]);
       if (findTokenRes.rowCount > 0) {
+        const token = findTokenRes.rows[0].token;
         return {
           u_id: user.u_id!,
-          token: findTokenRes.rows[0],
+          token: token,
         };
       }
       // didn't find a token, so create a new one.

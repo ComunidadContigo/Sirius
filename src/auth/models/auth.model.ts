@@ -9,4 +9,5 @@ export interface RefreshTokenPayload {
 export interface RefreshToken {
   u_id: number;
   token: string;
+  expo_push_token?: string;
 }
