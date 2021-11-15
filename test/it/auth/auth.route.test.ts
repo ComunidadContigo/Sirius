@@ -37,7 +37,7 @@ describe("Auth API Connection", () => {
       rowCount: 1,
       rows: [person],
     });
-    pgmock.add("SELECT token FROM refreshtoken WHERE u_id = $1", ["number"], {
+    pgmock.add("SELECT * FROM refreshtoken WHERE u_id = $1", ["number"], {
       rowCount: 0,
     });
     pgmock.add(
@@ -90,13 +90,18 @@ describe("Auth API Connection", () => {
       expiresIn: "1y",
     });
 
+    const refreshToken: RefreshToken = {
+      u_id: 1,
+      token: token,
+    };
+
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
       rowCount: 1,
       rows: [person],
     });
-    pgmock.add("SELECT token FROM refreshtoken WHERE u_id = $1", ["number"], {
+    pgmock.add("SELECT * FROM refreshtoken WHERE u_id = $1", ["number"], {
       rowCount: 1,
-      rows: [token],
+      rows: [refreshToken],
     });
     chai
       .request(app)
@@ -117,8 +122,4 @@ describe("Auth API Connection", () => {
         done();
       });
   });
-
-  /**
-   *
-   */
 });

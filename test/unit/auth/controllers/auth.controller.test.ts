@@ -38,7 +38,7 @@ describe("Auth Controller", () => {
       rowCount: 1,
       rows: [person],
     });
-    pgmock.add("SELECT token FROM refreshtoken WHERE u_id = $1", ["number"], {
+    pgmock.add("SELECT * FROM refreshtoken WHERE u_id = $1", ["number"], {
       rowCount: 0,
     });
 
@@ -93,13 +93,18 @@ describe("Auth Controller", () => {
       expiresIn: "1y",
     });
 
+    const refreshToken: RefreshToken = {
+      u_id: 1,
+      token: token,
+    };
+
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
       rowCount: 1,
       rows: [person],
     });
-    pgmock.add("SELECT token FROM refreshtoken WHERE u_id = $1", ["number"], {
+    pgmock.add("SELECT * FROM refreshtoken WHERE u_id = $1", ["number"], {
       rowCount: 1,
-      rows: [token],
+      rows: [refreshToken],
     });
 
     ac.login(dbPool, "test@test.test", "test").then(
