@@ -91,7 +91,7 @@ export default class AuthController {
     id: number
   ): Promise<boolean> {
     const query =
-      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2";
+      "UPDATE refreshtoken SET expo_push_token = $1 WHERE u_id = $2";
 
     const queryResult: QueryResult = await db.query(query, [
       expo_push_token,
