@@ -3,21 +3,21 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- development
+  - development
 
 pool:
   vmImage: ubuntu-latest
 
 resources:
-- repo: self
+  - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: "$(Build.BuildId)"
 
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '10.x'
+      versionSpec: "10.x"
       checkLatest: true
     displayName: "Install Node.js"
 
@@ -28,7 +28,7 @@ steps:
     env:
       SECRETKEY_REFRESH: $(secret_key_refresh)
       SECRETKEY_ACCESS: $(secret_key_access)
-  
+
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
@@ -37,96 +37,108 @@ steps:
 
   - task: Docker@2
     inputs:
-      containerRegistry: 'gabgc Docker Hub'
-      repository: 'gabgcdev/sirius-auth'
-      command: 'buildAndPush'
-      Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.auth'
-      buildContext: '$(Build.SourcesDirectory)'
-  
-  - task: Docker@2
-    inputs:
-      containerRegistry: 'gabgc Docker Hub'
-      repository: 'gabgcdev/sirius-buddy'
-      command: 'buildAndPush'
-      Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.buddy'
-      buildContext: '$(Build.SourcesDirectory)'
+      containerRegistry: "gabgc Docker Hub"
+      repository: "gabgcdev/sirius-auth"
+      command: "buildAndPush"
+      Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.auth"
+      buildContext: "$(Build.SourcesDirectory)"
+      tags: |
+        latest
+        $(Build.BuildId)
 
   - task: Docker@2
     inputs:
-      containerRegistry: 'gabgc Docker Hub'
-      repository: 'gabgcdev/sirius-user'
-      command: 'buildAndPush'
-      Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.user'
-      buildContext: '$(Build.SourcesDirectory)'
+      containerRegistry: "gabgc Docker Hub"
+      repository: "gabgcdev/sirius-buddy"
+      command: "buildAndPush"
+      Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.buddy"
+      buildContext: "$(Build.SourcesDirectory)"
+      tags: |
+        latest
+        $(Build.BuildId)
 
   - task: Docker@2
     inputs:
-      containerRegistry: 'gabgc Docker Hub'
-      repository: 'gabgcdev/sirius-realtime'
-      command: 'buildAndPush'
-      Dockerfile: '$(Build.SourcesDirectory)/docker/Dockerfile.realtime'
-      buildContext: '$(Build.SourcesDirectory)'
-  
-  - task: Kubernetes@1
+      containerRegistry: "gabgc Docker Hub"
+      repository: "gabgcdev/sirius-user"
+      command: "buildAndPush"
+      Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.user"
+      buildContext: "$(Build.SourcesDirectory)"
+      tags: |
+        latest
+        $(Build.BuildId)
+
+  - task: Docker@2
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'set'
-      arguments: 'image deployment/sirius-user *=gabgcdev/sirius-user:$(Build.BuildId)'
-  
-  - task: Kubernetes@1
-    inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'set'
-      arguments: 'image deployment/sirius-auth *=gabgcdev/sirius-auth:$(Build.BuildId)'
+      containerRegistry: "gabgc Docker Hub"
+      repository: "gabgcdev/sirius-realtime"
+      command: "buildAndPush"
+      Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.realtime"
+      buildContext: "$(Build.SourcesDirectory)"
+      tags: |
+        latest
+        $(Build.BuildId)
 
   - task: Kubernetes@1
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'set'
-      arguments: 'image deployment/sirius-buddy *=gabgcdev/sirius-buddy:$(Build.BuildId)'
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "set"
+      arguments: "image deployment/sirius-user *=gabgcdev/sirius-user:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'set'
-      arguments: 'image deployment/sirius-realtime *=gabgcdev/sirius-realtime:$(Build.BuildId)'
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "set"
+      arguments: "image deployment/sirius-auth *=gabgcdev/sirius-auth:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'rollout'
-      arguments: 'restart deployment/sirius-auth'
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "set"
+      arguments: "image deployment/sirius-buddy *=gabgcdev/sirius-buddy:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'rollout'
-      arguments: 'restart deployment/sirius-user'
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "set"
+      arguments: "image deployment/sirius-realtime *=gabgcdev/sirius-realtime:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'rollout'
-      arguments: 'restart deployment/sirius-buddy'
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "rollout"
+      arguments: "restart deployment/sirius-auth"
 
   - task: Kubernetes@1
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'okteto k8s'
-      namespace: 'gabgc'
-      command: 'rollout'
-      arguments: 'restart deployment/sirius-realtime'
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "rollout"
+      arguments: "restart deployment/sirius-user"
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "rollout"
+      arguments: "restart deployment/sirius-buddy"
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "rollout"
+      arguments: "restart deployment/sirius-realtime"
