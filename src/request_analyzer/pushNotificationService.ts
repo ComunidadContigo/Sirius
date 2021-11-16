@@ -1,28 +1,29 @@
-import {
-  Expo,
-  ExpoPushMessage,
-  ExpoPushTicket,
-  ExpoPushToken,
-} from "expo-server-sdk";
+import Expo, { ExpoPushMessage, ExpoPushTicket } from "expo-server-sdk";
+import ReqModel from "src/buddy/models/request.model";
 
-export const sendNotification = () => {
-  const expo = new Expo();
-  const pushToken: ExpoPushToken = "ExponentPushToken[bT1ALEIq-Gj59dltWPG557]";
-
+export const createRequestToFullfillNotificationMessage = (
+  recepient: string,
+  request: ReqModel
+): ExpoPushMessage => {
   const notif: ExpoPushMessage = {
-    to: pushToken,
+    to: recepient,
     sound: "default",
-    title: "test notificaiton",
+    title: "Someone could use a Buddy",
+    data: { request },
   };
 
-  const notifs: ExpoPushMessage[] = [];
-  notifs.push(notif);
-
-  if (Expo.isExpoPushToken(pushToken)) {
-    expo.sendPushNotificationsAsync(notifs);
-  } else {
-    console.log("nah b");
-  }
+  return notif;
 };
 
-export const sendChunkNotifications = () => {};
+export const sendChunkNotifications = async (
+  messages: ExpoPushMessage[]
+): Promise<ExpoPushTicket[]> => {
+  const expo = new Expo();
+  const chunks: ExpoPushMessage[][] = expo.chunkPushNotifications(messages);
+  let tickets: ExpoPushTicket[] = [];
+  for (let i = 0; i < chunks.length; i++) {
+    let ticketChunk = await expo.sendPushNotificationsAsync(chunks[i]);
+    tickets.push(...ticketChunk);
+  }
+  return tickets;
+};
