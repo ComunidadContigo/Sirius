@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.ts",
   "dependencies": {
+    "async-mutex": "^0.3.2",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
+    "expo-server-sdk": "^3.6.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
@@ -46,6 +48,7 @@
     "dev-user": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/user/main.js\"",
     "dev-buddy": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/buddy/main.js\"",
     "dev-realtime": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/real_time/main.js\"",
+    "dev-requestanalyzer": "cross-env NODE_ENV=testing tsc-watch --onSuccess \"node ./dist/request_analyzer/main.js\"",
     "test": "cross-env NODE_ENV=testing mocha -r ts-node/register --watch-extensions ts --watch --watch-files src/**/*,test/**/* 'test/**/*.test.ts'",
     "test:ci": "cross-env NODE_ENV=testing mocha -r ts-node/register --reporter mocha-junit-reporter --exit 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts"

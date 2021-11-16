@@ -1,0 +1,10 @@
+FROM node:alpine
+ENV NODE_ENV=testing
+
+WORKDIR /app
+
+COPY ["package.json", "yarn.lock", "./"]
+RUN yarn install
+COPY . .
+RUN npm run build
+CMD ["node", "./dist/request_analyzer/main.js"]
