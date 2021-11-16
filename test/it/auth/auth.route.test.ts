@@ -129,7 +129,7 @@ describe("Auth API Connection", () => {
 
   it("should successfully connect to API | PUT /expo/:id", (done: Done) => {
     pgmock.add(
-      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2",
+      "UPDATE refreshtoken SET expo_push_token = $1 WHERE u_id = $2",
       ["string", "number"],
       {
         rowCount: 1,

@@ -130,7 +130,7 @@ describe("Auth Controller", () => {
     const dbPool: Pool = getPool(pgmock);
     const ac: AuthController = new AuthController();
     pgmock.add(
-      "UPDATE refreshtoken SET expo_push_token = '$1' WHERE u_id = $2",
+      "UPDATE refreshtoken SET expo_push_token = $1 WHERE u_id = $2",
       ["string", "number"],
       {
         rowCount: 1,
