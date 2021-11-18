@@ -268,5 +268,79 @@ export default function UserRouter(): Router {
     );
   });
 
+  // Get User by requester ID
+  // GET /user/requester/:id
+  router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    userController.getRequesterID(db, +req.params.id).then(
+      (user: User) => {
+        const response: HttpResponse<User> = {
+          success: true,
+          returnCode: 200,
+          messages: [],
+          errors: [],
+          data: user,
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
+  // Get User by buddy ID
+  // GET /user/buddy/:id
+  router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    userController.getBuddyID(db, +req.params.id).then(
+      (user: User) => {
+        const response: HttpResponse<User> = {
+          success: true,
+          returnCode: 200,
+          messages: [],
+          errors: [],
+          data: user,
+        };
+        res.status(response.returnCode).send(response);
+      },
+      (err) => {
+        let response: HttpResponse;
+        if (err instanceof HttpError) {
+          response = {
+            success: false,
+            returnCode: err.status,
+            messages: [],
+            errors: [err.message, err.stack || ""],
+          };
+        } else {
+          response = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+        }
+        res.status(response.returnCode).send(response);
+      }
+    );
+  });
+
   return router;
 }

@@ -122,4 +122,22 @@ export default class UserController {
     const createdBuddy = await bc.createBuddy(db, buddy);
     return createdRequester && createdBuddy;
   }
+
+  public async getBuddyID(db: Pool, id: number): Promise<User> {
+    const query =
+      'SELECT email, phone_number, birth_date, first_name, last_name, gender, u_id FROM "user" NATURAL JOIN buddy WHERE b_id = $1';
+    const queryResult: QueryResult<User> = await db.query(query, [id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No user found with id = ${id}`);
+    return queryResult.rows[0];
+  }
+
+  public async getRequesterID(db: Pool, id: number): Promise<User> {
+    const query =
+      'SELECT email, phone_number, birth_date, first_name, last_name, gender, u_id FROM "user" NATURAL JOIN requester WHERE r_id = $1';
+    const queryResult: QueryResult<User> = await db.query(query, [id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No requester found with id = ${id}`);
+    return queryResult.rows[0];
+  }
 }
