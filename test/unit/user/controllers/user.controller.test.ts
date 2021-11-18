@@ -105,6 +105,88 @@ describe("User Controller", () => {
     );
   });
 
+  //Requester get
+
+  it("should be able to get user by requester ID", (done: Done) => {
+    const uc: UserController = new UserController();
+    const pool: Pool = getPool(pgmock);
+
+    const user: User = {
+      u_id: 1,
+      email: "",
+      phone_number: "",
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      gender: "",
+      password: "",
+    };
+
+    pgmock.add(
+      'SELECT email, phone_number, birth_date, first_name, last_name, gender, u_id FROM "user" NATURAL JOIN requester WHERE r_id = $1;',
+      ["number"],
+      {
+        rowCount: 1,
+        rows: [user],
+      }
+    );
+
+    uc.getRequesterID(pool, 1).then(
+      (user: User) => {
+        expect(user).to.have.property("u_id", 1);
+        expect(user).to.have.property("email", "");
+        expect(user).to.have.property("phone_number", "");
+        expect(user).to.have.property("birth_date", "1/1/1970");
+        expect(user).to.have.property("first_name", "");
+        expect(user).to.have.property("last_name", "");
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
+
+  it("should be able to get user by buddy ID", (done: Done) => {
+    const uc: UserController = new UserController();
+    const pool: Pool = getPool(pgmock);
+
+    const user: User = {
+      u_id: 1,
+      email: "",
+      phone_number: "",
+      birth_date: "1/1/1970",
+      first_name: "",
+      last_name: "",
+      gender: "",
+      password: "",
+    };
+
+    pgmock.add(
+      'SELECT email, phone_number, birth_date, first_name, last_name, gender, u_id FROM "user" NATURAL JOIN buddy WHERE b_id = $1;',
+      ["number"],
+      {
+        rowCount: 1,
+        rows: [user],
+      }
+    );
+
+    uc.getBuddyID(pool, 1).then(
+      (user: User) => {
+        expect(user).to.have.property("u_id", 1);
+        expect(user).to.have.property("email", "");
+        expect(user).to.have.property("phone_number", "");
+        expect(user).to.have.property("birth_date", "1/1/1970");
+        expect(user).to.have.property("first_name", "");
+        expect(user).to.have.property("last_name", "");
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
+
   it("should be able to create a user", (done: Done) => {
     const uc: UserController = new UserController();
     const pool: Pool = getPool(pgmock);
