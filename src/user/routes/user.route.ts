@@ -307,7 +307,7 @@ export default function UserRouter(): Router {
 
   // Get User by buddy ID
   // GET /user/buddy/:id
-  router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
+  router.get("/buddy/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.getBuddyID(db, +req.params.id).then(
       (user: User) => {
