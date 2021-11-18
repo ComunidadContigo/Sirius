@@ -8,16 +8,25 @@ CREATE TABLE "user"
   last_name VARCHAR(25) NOT NULL,
   gender VARCHAR(30) NOT NULL,
   u_id SERIAL PRIMARY KEY,
-  user_last_location VARCHAR(100),
   is_vetted BOOLEAN NOT NULL,
+  user_last_location VARCHAR(100),
   UNIQUE (email),
   UNIQUE (phone_number)
 );
+
+-- CREATE TABLE vetting(
+--   u_id INT NOT NULL,
+--   is_vetted BOOLEAN NOT NULL,
+--   buddify BOOLEAN NOT NULL,
+--   FOREIGN KEY (u_id) REFERENCES "user"(u_id),
+--   PRIMARY KEY (u_id)
+-- )
 
 CREATE TABLE buddy
 (
   b_id SERIAL PRIMARY KEY,
   buddy_rating_avg FLOAT NOT NULL,
+  is_active BOOLEAN NOT NULL,
   u_id INT NOT NULL,
   FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );

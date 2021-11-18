@@ -116,6 +116,7 @@ export default class UserController {
     const buddy: Buddy = {
       buddy_rating_avg: 0,
       u_id: id,
+      is_active: true,
     };
 
     const createdRequester = await rc.createRequester(db, requester);

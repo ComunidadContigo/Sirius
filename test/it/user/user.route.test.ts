@@ -261,9 +261,11 @@ describe("User API connection", () => {
     });
 
     const queryBuddy =
-      "INSERT INTO buddy " + "(u_id, buddy_rating_avg) " + "VALUES ($1, $2);";
+      "INSERT INTO buddy " +
+      "(u_id, buddy_rating_avg, is_active) " +
+      "VALUES ($1, $2, $3);";
 
-    pgmock.add(queryBuddy, ["number", "number"], {
+    pgmock.add(queryBuddy, ["number", "number", "boolean"], {
       rowCount: 1,
     });
 

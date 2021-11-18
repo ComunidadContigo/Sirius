@@ -22,20 +22,21 @@ describe("Buddy Controller", () => {
       b_id: 1,
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     const buddy2: Buddy = {
       b_id: 2,
-
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     const buddy3: Buddy = {
       b_id: 3,
-
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     pgmock.add("SELECT * FROM buddy;", [], {
@@ -63,9 +64,9 @@ describe("Buddy Controller", () => {
 
     const buddy: Buddy = {
       b_id: 1,
-
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     pgmock.add("SELECT * FROM buddy WHERE b_id = $1;", ["number"], {
@@ -90,15 +91,17 @@ describe("Buddy Controller", () => {
 
     const buddy: Buddy = {
       b_id: 1,
-
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     const query =
-      "INSERT INTO buddy " + "(u_id, buddy_rating_avg) " + "VALUES ($1, $2);";
+      "INSERT INTO buddy " +
+      "(u_id, buddy_rating_avg, is_active) " +
+      "VALUES ($1, $2, $3);";
 
-    pgmock.add(query, ["number", "number"], {
+    pgmock.add(query, ["number", "number", "boolean"], {
       rowCount: 1,
     });
 
@@ -119,9 +122,9 @@ describe("Buddy Controller", () => {
 
     const buddy: Buddy = {
       b_id: 1,
-
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     const query = buildUpdateByIDQuery<Buddy>("buddy", "b_id", 1, buddy);
@@ -185,6 +188,7 @@ describe("Buddy Controller", () => {
       b_id: 1,
       buddy_rating_avg: 0,
       u_id: 0,
+      is_active: false,
     };
 
     pgmock.add("SELECT * FROM buddy WHERE u_id = $1;", ["number"], {
