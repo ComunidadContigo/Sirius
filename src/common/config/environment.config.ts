@@ -31,14 +31,14 @@ const environment: Environment = {
     port: Number(process.env.DBPORT!),
     database: process.env.DBNAME!,
     ssl:
-      // process.env.NODE_ENV === "testing"
-      //   ? null
-      //   : {
-      //       rejectUnauthorized: false,
-      //     },
-      {
-        rejectUnauthorized: false,
-      },
+      process.env.NODE_ENV === "testing"
+        ? null
+        : {
+            rejectUnauthorized: false,
+          },
+    // {
+    //   rejectUnauthorized: false,
+    // },
   },
 
   hostconf: {

@@ -110,21 +110,28 @@ export default class UserController {
       throw new HttpError(404, `No user found with id = ${id}`);
     const rc: RequesterController = new RequesterController();
     const bc: BuddyController = new BuddyController();
-
+    //Requester role is automatically enabled
     const requester: Requester = {
       requester_rating_avg: 0,
       u_id: id,
     };
-
-    const buddy: Buddy = {
-      buddy_rating_avg: 0,
-      u_id: id,
-      is_active: true,
-    };
-
+    //Requester is created
     const createdRequester = await rc.createRequester(db, requester);
-    const createdBuddy = await bc.createBuddy(db, buddy);
-    return createdRequester && createdBuddy;
+
+    //Check if user opted in to become buddy.
+    if (await this.isBuddified(db, id)) {
+      const buddy: Buddy = {
+        buddy_rating_avg: 0,
+        u_id: id,
+        is_active: true,
+      };
+      //Create buddy.
+      const createdBuddy = await bc.createBuddy(db, buddy);
+      //return both since both were created.
+      return createdRequester && createdBuddy;
+    }
+    //return one since one was created.
+    return createdRequester;
   }
 
   public async getBuddyID(db: Pool, id: number): Promise<User> {
@@ -142,6 +149,14 @@ export default class UserController {
     const queryResult: QueryResult<User> = await db.query(query, [id]);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No requester found with id = ${id}`);
+    return queryResult.rows[0];
+  }
+
+  public async isBuddified(db: Pool, id: number): Promise<User> {
+    const query = "SELECT buddify FROM vetting WHERE u_id = $1;";
+    const queryResult: QueryResult<User> = await db.query(query, [id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No user found with id = ${id}`);
     return queryResult.rows[0];
   }
 
