@@ -9,4 +9,5 @@ export default interface User {
   last_name: string;
   user_last_location?: string;
   is_vetted?: boolean;
+  buddify?: boolean;
 }

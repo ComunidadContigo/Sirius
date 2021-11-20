@@ -14,13 +14,13 @@ CREATE TABLE "user"
   UNIQUE (phone_number)
 );
 
--- CREATE TABLE vetting(
---   u_id INT NOT NULL,
---   is_vetted BOOLEAN NOT NULL,
---   buddify BOOLEAN NOT NULL,
---   FOREIGN KEY (u_id) REFERENCES "user"(u_id),
---   PRIMARY KEY (u_id)
--- )
+CREATE TABLE vetting(
+  u_id INT NOT NULL,
+  --is_vetted BOOLEAN NOT NULL,
+  buddify BOOLEAN NOT NULL,
+  FOREIGN KEY (u_id) REFERENCES "user"(u_id),
+  PRIMARY KEY (u_id)
+);
 
 CREATE TABLE buddy
 (

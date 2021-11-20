@@ -77,6 +77,9 @@ export default class UserController {
       user.phone_number,
       user.is_vetted || false,
     ]);
+    //buddify
+    this.buddify(db, user);
+
     return queryResult.rowCount == 1;
   }
 
@@ -140,5 +143,18 @@ export default class UserController {
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No requester found with id = ${id}`);
     return queryResult.rows[0];
+  }
+
+  public async buddify(db: Pool, user: User): Promise<boolean> {
+    // try to find if a user already exist
+    const temp = this.getUserByEmail(db, user.email);
+    const tempId = (await temp).u_id;
+    const query =
+      "INSERT INTO vetting " + "(u_id, buddify) " + "VALUES ($1, $2);";
+    const queryResult: QueryResult = await db.query(query, [
+      tempId,
+      user.buddify || true,
+    ]);
+    return queryResult.rowCount == 1;
   }
 }
