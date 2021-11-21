@@ -242,6 +242,7 @@ describe("User API connection", () => {
   });
 
   it("should successfully connect to API | PUT /user/vetted/:id", (done: Done) => {
+    const buddify = true;
     pgmock.add(
       'UPDATE "user" SET is_vetted = true WHERE u_id = $1',
       ["number"],
@@ -250,7 +251,6 @@ describe("User API connection", () => {
         rows: [],
       }
     );
-
     const queryRequester =
       "INSERT INTO requester " +
       "(u_id, requester_rating_avg) " +
@@ -260,14 +260,21 @@ describe("User API connection", () => {
       rowCount: 1,
     });
 
-    const queryBuddy =
-      "INSERT INTO buddy " +
-      "(u_id, buddy_rating_avg, is_active) " +
-      "VALUES ($1, $2, $3);";
-
-    pgmock.add(queryBuddy, ["number", "number", "boolean"], {
+    pgmock.add("SELECT buddify FROM vetting WHERE u_id = $1", ["number"], {
       rowCount: 1,
+      rows: [buddify],
     });
+
+    if (buddify) {
+      const queryBuddy =
+        "INSERT INTO buddy " +
+        "(u_id, buddy_rating_avg, is_active) " +
+        "VALUES ($1, $2, $3);";
+
+      pgmock.add(queryBuddy, ["number", "number", "boolean"], {
+        rowCount: 1,
+      });
+    }
 
     chai
       .request(app)
