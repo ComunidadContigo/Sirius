@@ -5,10 +5,16 @@ import HttpResponse from "../../common/models/response.model";
 import UserController from "../controllers/user.controller";
 import User from "../models/user.model";
 import AuthMiddleware from "../../common/middleware/auth.middleware";
+import multer from "multer";
+import fs from "fs";
+import util from "util";
+import internal from "stream";
 
 export default function UserRouter(): Router {
   const userController: UserController = new UserController();
   const router: Router = Router();
+  const upload = multer({ dest: "uploads/" });
+  const unlinkFile = util.promisify(fs.unlink);
 
   // Get All Users
   // GET /user
@@ -344,6 +350,58 @@ export default function UserRouter(): Router {
         res.status(response.returnCode).send(response);
       }
     );
+  });
+
+  // Add User Picture
+  // POST /user/picture
+  router.post(
+    "/picture/:id",
+    upload.single("image"),
+    (req: Request, res: Response) => {
+      const db: Pool = req.app.get("dbPool");
+      const file = req.file;
+
+      userController.uploadPicture(db, +req.params.id, file).then(
+        (success: boolean) => {
+          const response: HttpResponse = {
+            success: success,
+            returnCode: 201,
+            messages: [],
+            errors: [],
+          };
+          res.status(response.returnCode).send(response);
+          console.log(file);
+          unlinkFile((file as Express.Multer.File).path);
+        },
+        (err) => {
+          let response: HttpResponse;
+          if (err instanceof HttpError) {
+            response = {
+              success: false,
+              returnCode: err.status,
+              messages: [],
+              errors: [err.message, err.stack || ""],
+            };
+          } else {
+            response = {
+              success: false,
+              returnCode: 500,
+              messages: [],
+              errors: [err.message],
+            };
+          }
+          res.status(response.returnCode).send(response);
+        }
+      );
+    }
+  );
+
+  // Get User Profile Picture by ID
+  // GET /user/picture/:id
+  router.get("/picture/:id", async (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
+    const picture = await userController.getUserPicture(db, +req.params.id);
+    picture.pipe(res);
   });
 
   return router;

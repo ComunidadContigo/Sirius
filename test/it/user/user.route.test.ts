@@ -243,7 +243,7 @@ describe("User API connection", () => {
 
   it("should successfully connect to API | PUT /user/vetted/:id", (done: Done) => {
     pgmock.add(
-      'UPDATE "user" SET is_vetted = true WHERE u_id = $1',
+      'UPDATE vetting SET is_vetted = true WHERE u_id = $1',
       ["number"],
       {
         rowCount: 1,
