@@ -118,16 +118,21 @@ export default class UserController {
       requester_rating_avg: 0,
       u_id: id,
     };
-
-    const buddy: Buddy = {
-      buddy_rating_avg: 0,
-      u_id: id,
-      is_active: true,
-    };
-
     const createdRequester = await rc.createRequester(db, requester);
-    const createdBuddy = await bc.createBuddy(db, buddy);
-    return createdRequester && createdBuddy;
+
+    const queryBuddy = "SELECT buddify FROM vetting WHERE u_id = $1;";
+    const queryResultBuddy: QueryResult = await db.query(queryBuddy, [id]);
+    if (queryResultBuddy.rowCount == 1 && queryResult.rows[0]) {
+      const buddy: Buddy = {
+        buddy_rating_avg: 0,
+        u_id: id,
+        is_active: true,
+      };
+      const createdBuddy = await bc.createBuddy(db, buddy);
+      return createdRequester && createdBuddy;
+    } else {
+      return createdRequester;
+    }
   }
 
   public async getBuddyID(db: Pool, id: number): Promise<User> {

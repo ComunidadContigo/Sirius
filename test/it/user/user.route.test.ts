@@ -274,4 +274,24 @@ describe("User API connection", () => {
         done();
       });
   });
+
+  it("should give an error | GET /user 404", (done: Done) => {
+    pgmock.add('SELECT * FROM "user"', [], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    chai
+      .request(app)
+      .get("/")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<User[]> = res.body; //type check
+        expect(resBody.success).to.be.false;
+        expect(resBody.returnCode).to.be.eql(404);
+        expect(resBody.errors[0]).to.be.eql("Database has no users!");
+        done();
+      });
+  });
 });
