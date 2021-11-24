@@ -128,7 +128,7 @@ const log = (message: string) => {
         new Date(unfullfilledRequests[i].request_date).getTime();
 
       // Need to change this later to an hour (or any other interval)
-      if (timeWaiting >= 1 * 1000 * 60) {
+      if (timeWaiting >= 10 * 1000 * 60) {
         // update request to cancel
         cancelRequest(db, unfullfilledRequests[i].rq_id!).then(
           (success) => {
