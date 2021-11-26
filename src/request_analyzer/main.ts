@@ -120,36 +120,41 @@ const log = (message: string) => {
   }, 1000 * 2);
 
   // cancel all unfullfilled requests if the threshold time has passed
-  setInterval(() => {
-    log("Cancelling unfullfilled requests exceeding 1h of wait time");
-    for (let i = 0; i < unfullfilledRequests.length; i++) {
-      const timeWaiting =
-        new Date().getTime() -
-        new Date(unfullfilledRequests[i].request_date).getTime();
+  // setInterval(() => {
+  //   log("Cancelling unfullfilled requests exceeding 1h of wait time");
+  //   for (let i = 0; i < unfullfilledRequests.length; i++) {
+  //     const timeWaiting =
+  //       new Date().getTime() -
+  //       new Date(unfullfilledRequests[i].request_date).getTime();
 
-      // Need to change this later to an hour (or any other interval)
-      if (timeWaiting >= 10 * 1000 * 60) {
-        // update request to cancel
-        cancelRequest(db, unfullfilledRequests[i].rq_id!).then(
-          (success) => {
-            mutex.runExclusive(() => {
-              log("Got mutex key for deleting cancelled requests from list!");
-              log(`Cancelling request ${unfullfilledRequests[i].rq_id}`);
-              // delete request in notif sent array
-              const index = requestsSentInNotifications.indexOf(
-                unfullfilledRequests[i]
-              );
-              if (index > -1) {
-                requestsSentInNotifications.splice(index, 1);
-              }
-            });
+  //     console.log(new Date(unfullfilledRequests[i].request_date).getTime());
+  //     console.log("TimeWaiting: " + timeWaiting);
+  //     console.log("THRESHOLD = " + 10 * 1000 * 30);
 
-            // TODO send notif to requester
-          },
-          (err) => log(err)
-        );
-      }
-    }
-    // Runs every 10 seconds.
-  }, 1000 * 10);
+  //     // Need to change this later to an hour (or any other interval)
+  //     if (timeWaiting >= 10 * 1000 * 30) {
+  //       log("Cancelling " + unfullfilledRequests[i].rq_id!);
+  //       // update request to cancel
+  //       cancelRequest(db, unfullfilledRequests[i].rq_id!).then(
+  //         (success) => {
+  //           mutex.runExclusive(() => {
+  //             log("Got mutex key for deleting cancelled requests from list!");
+  //             log(`Cancelling request ${unfullfilledRequests[i].rq_id}`);
+  //             // delete request in notif sent array
+  //             const index = requestsSentInNotifications.indexOf(
+  //               unfullfilledRequests[i]
+  //             );
+  //             if (index > -1) {
+  //               requestsSentInNotifications.splice(index, 1);
+  //             }
+  //           });
+
+  //           // TODO send notif to requester
+  //         },
+  //         (err) => log(err)
+  //       );
+  //     }
+  //   }
+  //   // Runs every 10 seconds.
+  // }, 1000 * 10);
 })();
