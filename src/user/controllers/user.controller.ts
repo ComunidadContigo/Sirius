@@ -226,4 +226,24 @@ export default class UserController {
 
     return s3.getObject(downloadParameters).createReadStream();
   }
+
+  public async getPicture(key: string): Promise<any> {
+    const bucketName = environment.bucket_name;
+    const region = environment.bucket_region;
+    const accessKeyId = environment.bucket_access_key;
+    const secretAccessKey = environment.bucket_secret_key;
+
+    const s3 = new S3({
+      region,
+      accessKeyId,
+      secretAccessKey,
+    });
+
+    const downloadParameters = {
+      Key: key,
+      Bucket: bucketName,
+    };
+
+    return s3.getObject(downloadParameters).createReadStream();
+  }
 }
