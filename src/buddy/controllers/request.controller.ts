@@ -33,11 +33,11 @@ export default class RequestController {
     return queryResult.rows[0];
   }
 
-  public async createRequest(db: Pool, request: ReqModel): Promise<boolean> {
+  public async createRequest(db: Pool, request: ReqModel): Promise<number> {
     const query =
       "INSERT INTO request " +
       "(request_date, request_meeting_point, stat, request_destination, r_id) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "VALUES ($1, $2, $3, $4, $5) RETURNING rq_id;";
     const queryResult: QueryResult = await db.query(query, [
       request.request_date,
       request.request_meeting_point,
@@ -45,7 +45,8 @@ export default class RequestController {
       request.request_destination,
       request.r_id,
     ]);
-    return queryResult.rowCount == 1;
+
+    return queryResult.rows[0];
   }
 
   public async updateRequestByID(

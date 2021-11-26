@@ -49,6 +49,17 @@ steps:
   - task: Docker@2
     inputs:
       containerRegistry: "gabgc Docker Hub"
+      repository: "gabgcdev/sirius-request-analyzer"
+      command: "buildAndPush"
+      Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.requestanalyzer"
+      buildContext: "$(Build.SourcesDirectory)"
+      tags: |
+        latest
+        $(Build.BuildId)
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: "gabgc Docker Hub"
       repository: "gabgcdev/sirius-buddy"
       command: "buildAndPush"
       Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.buddy"
@@ -93,6 +104,14 @@ steps:
       kubernetesServiceEndpoint: "okteto k8s"
       namespace: "gabgc"
       command: "set"
+      arguments: "image deployment/sirius-request-analyzer *=gabgcdev/sirius-request-analyzer:$(Build.BuildId)"
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "set"
       arguments: "image deployment/sirius-auth *=gabgcdev/sirius-auth:$(Build.BuildId)"
 
   - task: Kubernetes@1
@@ -118,6 +137,14 @@ steps:
       namespace: "gabgc"
       command: "rollout"
       arguments: "restart deployment/sirius-auth"
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "okteto k8s"
+      namespace: "gabgc"
+      command: "rollout"
+      arguments: "restart deployment/sirius-request-analyzer"
 
   - task: Kubernetes@1
     inputs:
