@@ -154,7 +154,6 @@ describe("Request API connection", () => {
 
   it("should successfully connect to API | POST /request", (done: Done) => {
     const req: ReqModel = {
-      rq_id: 1,
       request_date: "",
       request_meeting_point: "",
       request_destination: "",
@@ -165,10 +164,11 @@ describe("Request API connection", () => {
     const query =
       "INSERT INTO request " +
       "(request_date, request_meeting_point, stat, request_destination, r_id) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "VALUES ($1, $2, $3, $4, $5) RETURNING rq_id;";
 
     pgmock.add(query, ["string", "string", "string", "string", "number"], {
       rowCount: 1,
+      rows: [1]
     });
 
     chai
@@ -177,11 +177,11 @@ describe("Request API connection", () => {
       .send(req)
       .set({ Authorization: `Bearer ${accessToken}` })
       .end((err, res) => {
-        const resBody: HttpResponse<ReqModel> = res.body; //type check
+        const resBody: HttpResponse<number> = res.body; //type check
         expect(resBody.success).to.be.true;
         expect(resBody.returnCode).to.be.eql(201);
         expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
-        expect(resBody.data).to.be.undefined; // this route does not return data
+        expect(resBody.data).to.be.eql(1); // this route does not return data
         done();
       });
   });
