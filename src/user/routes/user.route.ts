@@ -355,7 +355,7 @@ export default function UserRouter(): Router {
   // Add User Picture
   // POST /user/picture
   router.post(
-    "/picture/:id",
+    "/profile/:id",
     upload.single("image"),
     (req: Request, res: Response) => {
       const db: Pool = req.app.get("dbPool");
@@ -398,7 +398,7 @@ export default function UserRouter(): Router {
 
   // Get User Profile Picture by ID
   // GET /user/picture/:id
-  router.get("/picture/:id", async (req: Request, res: Response) => {
+  router.get("/profile/:id", async (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     const picture = await userController.getUserPicture(db, +req.params.id);
     picture.pipe(res);
