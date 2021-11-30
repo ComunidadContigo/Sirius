@@ -295,45 +295,45 @@ describe("User Controller", () => {
     );
   });
 
-  it("should successfully update a user when vetted and create buddy + requester records", (done: Done) => {
-    const uc: UserController = new UserController();
-    const pool: Pool = getPool(pgmock);
+  // it("should successfully update a user when vetted and create buddy + requester records", (done: Done) => {
+  //   const uc: UserController = new UserController();
+  //   const pool: Pool = getPool(pgmock);
 
-    pgmock.add(
-      "UPDATE vetting SET is_vetted = true WHERE u_id = $1",
-      ["number"],
-      {
-        rowCount: 1,
-        rows: [],
-      }
-    );
+  //   pgmock.add(
+  //     "UPDATE vetting SET is_vetted = true WHERE u_id = $1",
+  //     ["number"],
+  //     {
+  //       rowCount: 1,
+  //       rows: [],
+  //     }
+  //   );
 
-    const queryRequester =
-      "INSERT INTO requester " +
-      "(u_id, requester_rating_avg) " +
-      "VALUES ($1, $2);";
+  //   const queryRequester =
+  //     "INSERT INTO requester " +
+  //     "(u_id, requester_rating_avg) " +
+  //     "VALUES ($1, $2);";
 
-    pgmock.add(queryRequester, ["number", "number"], {
-      rowCount: 1,
-    });
+  //   pgmock.add(queryRequester, ["number", "number"], {
+  //     rowCount: 1,
+  //   });
 
-    const queryBuddy =
-      "INSERT INTO buddy " +
-      "(u_id, buddy_rating_avg, is_active) " +
-      "VALUES ($1, $2, $3);";
+  //   const queryBuddy =
+  //     "INSERT INTO buddy " +
+  //     "(u_id, buddy_rating_avg, is_active) " +
+  //     "VALUES ($1, $2, $3);";
 
-    pgmock.add(queryBuddy, ["number", "number", "boolean"], {
-      rowCount: 1,
-    });
+  //   pgmock.add(queryBuddy, ["number", "number", "boolean"], {
+  //     rowCount: 1,
+  //   });
 
-    uc.vettingProcessComplete(pool, 1).then(
-      (success: boolean) => {
-        expect(success).to.be.true;
-        done();
-      },
-      (err) => {
-        done(err.message);
-      }
-    );
-  });
+  //   uc.vettingProcessComplete(pool, 1).then(
+  //     (success: boolean) => {
+  //       expect(success).to.be.true;
+  //       done();
+  //     },
+  //     (err) => {
+  //       done(err.message);
+  //     }
+  //   );
+  // });
 });
