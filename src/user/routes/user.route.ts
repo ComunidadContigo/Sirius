@@ -404,5 +404,12 @@ export default function UserRouter(): Router {
     picture.pipe(res);
   });
 
+  // Get picture key
+  // GET /user/picture/:key
+  router.get("/picture/:key", async (req: Request, res: Response) => {
+    const picture = await userController.getPicture(req.params.key);
+    picture.pipe(res);
+  });
+
   return router;
 }
