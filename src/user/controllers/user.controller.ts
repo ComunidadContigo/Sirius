@@ -214,25 +214,19 @@ export default class UserController {
     });
 
     //Check if user has a picture
-    const query = 'SELECT * FROM "user" WHERE u_id = $1;';
-    const queryResult: QueryResult<User> = await db.query(query, [id]);
-    if (queryResult.rowCount == 0) {
-      throw new HttpError(404, `User with id = ${id} does not exist!`);
-    }
 
-    let key = queryResult.rows[0].picture;
+    const user = await this.getUserByID(db, id);
 
-    if (key === undefined || key === null) {
-      key = "a90ac38defefa8d2741ab552172affd9";
+    if (user.picture === undefined || user.picture === null) {
       const downloadParameters = {
-        Key: key,
+        Key: "a90ac38defefa8d2741ab552172affd9",
         Bucket: bucketName,
       };
 
       return s3.getObject(downloadParameters).createReadStream();
     } else {
       const downloadParameters = {
-        Key: key,
+        Key: user.picture,
         Bucket: bucketName,
       };
 
