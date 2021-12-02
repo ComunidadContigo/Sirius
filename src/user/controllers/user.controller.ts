@@ -121,7 +121,9 @@ export default class UserController {
     const createdRequester = await rc.createRequester(db, requester);
 
     const queryBuddy = "SELECT buddify FROM vetting WHERE u_id = $1;";
-    const queryResultBuddy: QueryResult = await db.query(queryBuddy, [id]);
+    const queryResultBuddy: QueryResult<Boolean> = await db.query(queryBuddy, [
+      id,
+    ]);
     if (queryResultBuddy.rowCount == 1 && queryResult.rows[0]) {
       const buddy: Buddy = {
         buddy_rating_avg: 0,
