@@ -8,7 +8,7 @@ import RequesterController from "../../buddy/controllers/requester.controller";
 import BuddyController from "../../buddy/controllers/buddy.controller";
 import Requester from "../../buddy/models/requester.model";
 import Buddy from "../../buddy/models/buddy.model";
-import { S3 } from "aws-sdk";
+import { AWSError, S3, Request } from "aws-sdk";
 import fs from "fs";
 import internal from "stream";
 
@@ -211,7 +211,10 @@ export default class UserController {
     return queryResult.rowCount == 1;
   }
 
-  public async getUserPicture(db: Pool, id: number): Promise<any> {
+  public async getUserPicture(
+    db: Pool,
+    id: number
+  ): Promise<Request<S3.GetObjectOutput, AWSError>> {
     const bucketName = environment.bucket_name;
     const region = environment.bucket_region;
     const accessKeyId = environment.bucket_access_key;
@@ -233,18 +236,20 @@ export default class UserController {
         Bucket: bucketName,
       };
 
-      return s3.getObject(downloadParameters).createReadStream();
+      return s3.getObject(downloadParameters);
     } else {
       const downloadParameters = {
         Key: user.picture,
         Bucket: bucketName,
       };
 
-      return s3.getObject(downloadParameters).createReadStream();
+      return s3.getObject(downloadParameters);
     }
   }
 
-  public async getPicture(key: string): Promise<any> {
+  public async getPicture(
+    key: string
+  ): Promise<Request<S3.GetObjectOutput, AWSError>> {
     const bucketName = environment.bucket_name;
     const region = environment.bucket_region;
     const accessKeyId = environment.bucket_access_key;
@@ -261,6 +266,6 @@ export default class UserController {
       Bucket: bucketName,
     };
 
-    return s3.getObject(downloadParameters).createReadStream();
+    return s3.getObject(downloadParameters);
   }
 }
