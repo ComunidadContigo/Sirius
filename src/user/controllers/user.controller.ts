@@ -171,6 +171,12 @@ export default class UserController {
     return queryResult.rowCount == 1;
   }
 
+  public async isVetted(db: Pool, id: number): Promise<boolean> {
+    const query = "SELECT is_vetted FROM vetting WHERE u_id = $1;";
+    const queryResult: QueryResult = await db.query(query, [id]);
+    return queryResult.rows[0];
+  }
+
   public async uploadPicture(
     db: Pool,
     id: number,

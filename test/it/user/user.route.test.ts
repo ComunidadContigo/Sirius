@@ -300,4 +300,25 @@ describe("User API connection", () => {
         done();
       });
   });
+
+  it("should successfully connect to API | GET /user/isvetted/:id", (done: Done) => {
+    pgmock.add("SELECT is_vetted FROM vetting WHERE u_id = $1;", ["number"], {
+      rowCount: 1,
+      rows: [true],
+    });
+
+    chai
+      .request(app)
+      .get("/isvetted/1")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<boolean> = res.body; //type check
+        expect(resBody.success).to.be.true;
+        expect(resBody.returnCode).to.be.eql(200);
+        expect(resBody.rowCount).to.be.undefined;
+        expect(resBody.errors[0]).to.be.undefined;
+        done();
+      });
+  });
 });
