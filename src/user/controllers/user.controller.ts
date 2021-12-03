@@ -174,6 +174,8 @@ export default class UserController {
   public async isVetted(db: Pool, id: number): Promise<boolean> {
     const query = "SELECT is_vetted FROM vetting WHERE u_id = $1;";
     const queryResult: QueryResult = await db.query(query, [id]);
+    if (queryResult.rowCount == 0)
+      throw new HttpError(404, `No user found with id = ${id}`);
     return queryResult.rows[0];
   }
 
