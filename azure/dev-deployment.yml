@@ -1,7 +1,3 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
   - development
 
@@ -17,12 +13,12 @@ variables:
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: "10.x"
+      versionSpec: "16.13.1"
       checkLatest: true
     displayName: "Install Node.js"
 
   - script: |
-      npm install
+      yarn install
       npm run test:ci
     displayName: "npm install and test"
     env:
@@ -41,6 +37,17 @@ steps:
       repository: "gabgcdev/sirius-auth"
       command: "buildAndPush"
       Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.auth"
+      buildContext: "$(Build.SourcesDirectory)"
+      tags: |
+        latest
+        $(Build.BuildId)
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: "gabgc Docker Hub"
+      repository: "gabgcdev/sirius-request-analyzer"
+      command: "buildAndPush"
+      Dockerfile: "$(Build.SourcesDirectory)/docker/Dockerfile.requestanalyzer"
       buildContext: "$(Build.SourcesDirectory)"
       tags: |
         latest
@@ -82,63 +89,79 @@ steps:
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "set"
       arguments: "image deployment/sirius-user *=gabgcdev/sirius-user:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
+      command: "set"
+      arguments: "image deployment/sirius-request-analyzer *=gabgcdev/sirius-request-analyzer:$(Build.BuildId)"
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "set"
       arguments: "image deployment/sirius-auth *=gabgcdev/sirius-auth:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "set"
       arguments: "image deployment/sirius-buddy *=gabgcdev/sirius-buddy:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "set"
       arguments: "image deployment/sirius-realtime *=gabgcdev/sirius-realtime:$(Build.BuildId)"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "rollout"
       arguments: "restart deployment/sirius-auth"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
+      command: "rollout"
+      arguments: "restart deployment/sirius-request-analyzer"
+
+  - task: Kubernetes@1
+    inputs:
+      connectionType: "Kubernetes Service Connection"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "rollout"
       arguments: "restart deployment/sirius-user"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "rollout"
       arguments: "restart deployment/sirius-buddy"
 
   - task: Kubernetes@1
     inputs:
       connectionType: "Kubernetes Service Connection"
-      kubernetesServiceEndpoint: "okteto k8s"
-      namespace: "gabgc"
+      kubernetesServiceEndpoint: "AWS k8s"
+      namespace: "default"
       command: "rollout"
       arguments: "restart deployment/sirius-realtime"

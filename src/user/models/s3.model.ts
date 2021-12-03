@@ -1,4 +1,4 @@
-export default interface User {
+export default interface S3Object {
   u_id?: number;
   email: string;
   password: string;
@@ -10,5 +10,4 @@ export default interface User {
   user_last_location?: string;
   is_vetted?: boolean;
   buddify?: boolean;
-  picture?: string;
 }

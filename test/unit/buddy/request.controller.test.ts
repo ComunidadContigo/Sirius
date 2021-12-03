@@ -108,15 +108,16 @@ describe("Request Controller", () => {
     const query =
       "INSERT INTO request " +
       "(request_date, request_meeting_point, stat, request_destination, r_id) " +
-      "VALUES ($1, $2, $3, $4, $5);";
+      "VALUES ($1, $2, $3, $4, $5) RETURNING rq_id;";
 
     pgmock.add(query, ["string", "string", "string", "string", "number"], {
       rowCount: 1,
+      rows: [1]
     });
 
     rc.createRequest(pool, request).then(
-      (success: boolean) => {
-        expect(success).to.be.true;
+      (rqid: number) => {
+        expect(rqid).to.be.eql(1);
         done();
       },
       (err) => {

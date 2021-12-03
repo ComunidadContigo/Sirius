@@ -140,12 +140,13 @@ export default function RequestRouter(): Router {
   router.post("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     requestController.createRequest(db, req.body as ReqModel).then(
-      (success: boolean) => {
-        const response: HttpResponse = {
-          success: success,
+      (rqid: number) => {
+        const response: HttpResponse<number> = {
+          success: true,
           returnCode: 201,
           messages: [],
           errors: [],
+          data: rqid,
         };
         res.status(response.returnCode).send(response);
       },

@@ -7,6 +7,10 @@ export interface Environment {
   hostconf: HostConfig;
   secret_key_refresh: string;
   secret_key_access: string;
+  bucket_name: string;
+  bucket_region: string;
+  bucket_access_key: string;
+  bucket_secret_key: string;
 }
 
 export interface HostConfig {
@@ -31,14 +35,14 @@ const environment: Environment = {
     port: Number(process.env.DBPORT!),
     database: process.env.DBNAME!,
     ssl:
-      // process.env.NODE_ENV === "testing"
-      //   ? null
-      //   : {
-      //       rejectUnauthorized: false,
-      //     },
-      {
-        rejectUnauthorized: false,
-      },
+      process.env.NODE_ENV === "testing"
+        ? null
+        : {
+            rejectUnauthorized: false,
+          },
+    // {
+    //   rejectUnauthorized: false,
+    // },
   },
 
   hostconf: {
@@ -48,6 +52,10 @@ const environment: Environment = {
 
   secret_key_refresh: process.env.SECRETKEY_REFRESH!,
   secret_key_access: process.env.SECRETKEY_ACCESS!,
+  bucket_name: process.env.AWS_BUCKET_NAME!,
+  bucket_region: process.env.AWS_BUCKET_REGION!,
+  bucket_access_key: process.env.AWS_ACCESS_KEY!,
+  bucket_secret_key: process.env.AWS_SECRET_KEY!,
 };
 
 export default environment;

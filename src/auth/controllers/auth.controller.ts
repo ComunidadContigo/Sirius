@@ -34,7 +34,6 @@ export default class AuthController {
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        is_vetted: user.is_vetted!,
       };
       const token = jwt.sign(payload, environmentConfig.secret_key_refresh, {
         expiresIn: "1y",

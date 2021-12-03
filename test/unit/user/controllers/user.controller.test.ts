@@ -26,7 +26,6 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      is_vetted: false,
       gender: "",
     };
 
@@ -38,7 +37,6 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      is_vetted: false,
       gender: "",
     };
 
@@ -50,7 +48,6 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      is_vetted: false,
       gender: "",
     };
 
@@ -85,7 +82,6 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      is_vetted: false,
       gender: "",
     };
 
@@ -198,14 +194,13 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "asdf",
       last_name: "asdf",
-      is_vetted: false,
       gender: "asdf",
     };
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, is_vetted) " +
-      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
@@ -215,16 +210,7 @@ describe("User Controller", () => {
 
     pgmock.add(
       query,
-      [
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "boolean",
-      ],
+      ["string", "string", "string", "string", "string", "string", "string"],
       {
         rowCount: 1,
       }
@@ -253,7 +239,6 @@ describe("User Controller", () => {
       birth_date: "1/1/1970",
       first_name: "",
       last_name: "",
-      is_vetted: false,
       gender: "",
     };
 
@@ -315,7 +300,7 @@ describe("User Controller", () => {
     const pool: Pool = getPool(pgmock);
 
     pgmock.add(
-      'UPDATE "user" SET is_vetted = true WHERE u_id = $1',
+      "UPDATE vetting SET is_vetted = true WHERE u_id = $1",
       ["number"],
       {
         rowCount: 1,
@@ -331,6 +316,12 @@ describe("User Controller", () => {
     pgmock.add(queryRequester, ["number", "number"], {
       rowCount: 1,
     });
+
+    const queryBuddify = "SELECT buddify FROM vetting WHERE u_id = $1;"
+    pgmock.add(queryBuddify, ["number"],{
+      rowcount: 1,
+      rows: [true]
+    })
 
     const queryBuddy =
       "INSERT INTO buddy " +
@@ -351,4 +342,25 @@ describe("User Controller", () => {
       }
     );
   });
+
+  it("should return if a user is vetted", (done: Done) => {
+    const uc: UserController = new UserController();
+    const pool: Pool = getPool(pgmock);
+
+    pgmock.add('SELECT is_vetted FROM vetting WHERE u_id = $1;', ["number"], {
+      rowCount: 1,
+      rows: [true],
+    });
+
+    uc.isVetted(pool, 1).then(
+      (success: boolean) => {
+        expect(success).to.be.true;
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
+
 });
