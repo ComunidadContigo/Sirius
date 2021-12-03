@@ -126,8 +126,8 @@ describe("User API connection", () => {
 
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, is_vetted) " +
-      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
     // since createUser also queries for taken emails and usernames, we need to add those too
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
@@ -137,16 +137,7 @@ describe("User API connection", () => {
 
     pgmock.add(
       query,
-      [
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "string",
-        "boolean",
-      ],
+      ["string", "string", "string", "string", "string", "string", "string"],
       {
         rowCount: 1,
       }
@@ -243,7 +234,7 @@ describe("User API connection", () => {
 
   it("should successfully connect to API | PUT /user/vetted/:id", (done: Done) => {
     pgmock.add(
-      'UPDATE "user" SET is_vetted = true WHERE u_id = $1',
+      "UPDATE vetting SET is_vetted = true WHERE u_id = $1",
       ["number"],
       {
         rowCount: 1,
@@ -258,6 +249,12 @@ describe("User API connection", () => {
 
     pgmock.add(queryRequester, ["number", "number"], {
       rowCount: 1,
+    });
+
+    const queryBuddify = "SELECT buddify FROM vetting WHERE u_id = $1;";
+    pgmock.add(queryBuddify, ["number"], {
+      rowcount: 1,
+      rows: [true],
     });
 
     const queryBuddy =
@@ -280,6 +277,26 @@ describe("User API connection", () => {
         expect(resBody.returnCode).to.be.eql(202);
         expect(resBody.rowCount).to.be.undefined; // this route does not return rowCount
         expect(resBody.data).to.be.undefined; // this route does not return data
+        done();
+      });
+  });
+
+  it("should give an error | GET /user 404", (done: Done) => {
+    pgmock.add('SELECT * FROM "user"', [], {
+      rowCount: 0,
+      rows: [],
+    });
+
+    chai
+      .request(app)
+      .get("/")
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .end((err, res) => {
+        if (err) done(err);
+        const resBody: HttpResponse<User[]> = res.body; //type check
+        expect(resBody.success).to.be.false;
+        expect(resBody.returnCode).to.be.eql(404);
+        expect(resBody.errors[0]).to.be.eql("Database has no users!");
         done();
       });
   });

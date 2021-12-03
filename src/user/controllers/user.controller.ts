@@ -1,12 +1,16 @@
 import { Pool, QueryResult } from "pg";
 import bcrypt from "bcrypt";
 import { buildUserUpdateByIDQuery } from "../../common/tools/queryBuilder";
+import environment from "../../common/config/environment.config";
 import User from "../models/user.model";
 import HttpError from "../../common/models/error.model";
 import RequesterController from "../../buddy/controllers/requester.controller";
 import BuddyController from "../../buddy/controllers/buddy.controller";
 import Requester from "../../buddy/models/requester.model";
 import Buddy from "../../buddy/models/buddy.model";
+import { S3 } from "aws-sdk";
+import fs from "fs";
+import internal from "stream";
 
 export default class UserController {
   private saltRounds = 10;
@@ -65,8 +69,8 @@ export default class UserController {
     );
     const query =
       'INSERT INTO "user" ' +
-      "(email, password, first_name, last_name, birth_date, gender, phone_number, is_vetted) " +
-      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+      "(email, password, first_name, last_name, birth_date, gender, phone_number) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7);";
     const queryResult: QueryResult = await db.query(query, [
       user.email,
       hashedPassword,
@@ -75,7 +79,6 @@ export default class UserController {
       new Date(user.birth_date).toISOString(),
       user.gender,
       user.phone_number,
-      user.is_vetted || false,
     ]);
     //buddify
     this.buddify(db, user);
@@ -104,7 +107,7 @@ export default class UserController {
   }
 
   public async vettingProcessComplete(db: Pool, id: number): Promise<boolean> {
-    const query = 'UPDATE "user" SET is_vetted = true WHERE u_id = $1;';
+    const query = "UPDATE vetting SET is_vetted = true WHERE u_id = $1;";
     const queryResult: QueryResult = await db.query(query, [id]);
     if (queryResult.rowCount == 0)
       throw new HttpError(404, `No user found with id = ${id}`);
@@ -115,16 +118,23 @@ export default class UserController {
       requester_rating_avg: 0,
       u_id: id,
     };
-
-    const buddy: Buddy = {
-      buddy_rating_avg: 0,
-      u_id: id,
-      is_active: true,
-    };
-
     const createdRequester = await rc.createRequester(db, requester);
-    const createdBuddy = await bc.createBuddy(db, buddy);
-    return createdRequester && createdBuddy;
+
+    const queryBuddy = "SELECT buddify FROM vetting WHERE u_id = $1;";
+    const queryResultBuddy: QueryResult<Boolean> = await db.query(queryBuddy, [
+      id,
+    ]);
+    if (queryResultBuddy.rowCount == 1 && queryResult.rows[0]) {
+      const buddy: Buddy = {
+        buddy_rating_avg: 0,
+        u_id: id,
+        is_active: true,
+      };
+      const createdBuddy = await bc.createBuddy(db, buddy);
+      return createdRequester && createdBuddy;
+    } else {
+      return createdRequester;
+    }
   }
 
   public async getBuddyID(db: Pool, id: number): Promise<User> {
@@ -150,11 +160,99 @@ export default class UserController {
     const temp = this.getUserByEmail(db, user.email);
     const tempId = (await temp).u_id;
     const query =
-      "INSERT INTO vetting " + "(u_id, buddify) " + "VALUES ($1, $2);";
+      "INSERT INTO vetting " +
+      "(u_id, buddify, is_vetted) " +
+      "VALUES ($1, $2, $3);";
     const queryResult: QueryResult = await db.query(query, [
       tempId,
       user.buddify || true,
+      user.is_vetted || false,
     ]);
     return queryResult.rowCount == 1;
+  }
+
+  public async uploadPicture(
+    db: Pool,
+    id: number,
+    file: any
+  ): Promise<boolean> {
+    const bucketName = environment.bucket_name;
+    const region = environment.bucket_region;
+    const accessKeyId = environment.bucket_access_key;
+    const secretAccessKey = environment.bucket_secret_key;
+
+    const s3 = new S3({
+      region,
+      accessKeyId,
+      secretAccessKey,
+    });
+
+    const fileStream = fs.createReadStream(file.path);
+
+    const uploadParameters = {
+      Bucket: bucketName,
+      Body: fileStream,
+      Key: file.filename,
+    };
+    //check if user exists.
+    this.getUserByID(db, id);
+
+    const query = 'UPDATE "user" SET picture = $1 WHERE u_id = $2;';
+    const queryResult: QueryResult = await db.query(query, [file.filename, id]);
+    s3.upload(uploadParameters).promise();
+    return queryResult.rowCount == 1;
+  }
+
+  public async getUserPicture(db: Pool, id: number): Promise<any> {
+    const bucketName = environment.bucket_name;
+    const region = environment.bucket_region;
+    const accessKeyId = environment.bucket_access_key;
+    const secretAccessKey = environment.bucket_secret_key;
+
+    const s3 = new S3({
+      region,
+      accessKeyId,
+      secretAccessKey,
+    });
+
+    //Check if user has a picture
+
+    const user = await this.getUserByID(db, id);
+
+    if (user.picture === undefined || user.picture === null) {
+      const downloadParameters = {
+        Key: "a90ac38defefa8d2741ab552172affd9",
+        Bucket: bucketName,
+      };
+
+      return s3.getObject(downloadParameters).createReadStream();
+    } else {
+      const downloadParameters = {
+        Key: user.picture,
+        Bucket: bucketName,
+      };
+
+      return s3.getObject(downloadParameters).createReadStream();
+    }
+  }
+
+  public async getPicture(key: string): Promise<any> {
+    const bucketName = environment.bucket_name;
+    const region = environment.bucket_region;
+    const accessKeyId = environment.bucket_access_key;
+    const secretAccessKey = environment.bucket_secret_key;
+
+    const s3 = new S3({
+      region,
+      accessKeyId,
+      secretAccessKey,
+    });
+
+    const downloadParameters = {
+      Key: key,
+      Bucket: bucketName,
+    };
+
+    return s3.getObject(downloadParameters).createReadStream();
   }
 }

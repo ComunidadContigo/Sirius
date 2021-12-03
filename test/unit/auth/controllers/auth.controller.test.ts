@@ -31,7 +31,6 @@ describe("Auth Controller", () => {
       gender: "Male",
       last_name: "Perro Grande",
       birth_date: "1/1/1970",
-      is_vetted: false,
     };
 
     pgmock.add('SELECT * FROM "user" WHERE email = $1;', ["string"], {
@@ -59,7 +58,6 @@ describe("Auth Controller", () => {
         expect(data.email).to.eql(person.email);
         expect(data.first_name).to.eql(person.first_name);
         expect(data.last_name).to.eql(person.last_name);
-        expect(data.is_vetted).to.be.eql(person.is_vetted);
         done();
       },
       (err) => {
@@ -80,14 +78,12 @@ describe("Auth Controller", () => {
       gender: "Male",
       last_name: "Perro Grande",
       birth_date: "1/1/1970",
-      is_vetted: false,
     };
     const payload: RefreshTokenPayload = {
       u_id: person.u_id!,
       email: person.email,
       first_name: person.first_name,
       last_name: person.last_name,
-      is_vetted: person.is_vetted!,
     };
     const token = jwt.sign(payload, environment.secret_key_refresh, {
       expiresIn: "1y",
@@ -117,7 +113,6 @@ describe("Auth Controller", () => {
         expect(data.email).to.eql(person.email);
         expect(data.first_name).to.eql(person.first_name);
         expect(data.last_name).to.eql(person.last_name);
-        expect(data.is_vetted).to.be.eql(person.is_vetted);
         done();
       },
       (err) => {

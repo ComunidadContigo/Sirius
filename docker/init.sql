@@ -8,7 +8,7 @@ CREATE TABLE "user"
   last_name VARCHAR(25) NOT NULL,
   gender VARCHAR(30) NOT NULL,
   u_id SERIAL PRIMARY KEY,
-  is_vetted BOOLEAN NOT NULL,
+  picture VARCHAR(512),
   user_last_location VARCHAR(100),
   UNIQUE (email),
   UNIQUE (phone_number)
@@ -16,7 +16,7 @@ CREATE TABLE "user"
 
 CREATE TABLE vetting(
   u_id INT NOT NULL,
-  --is_vetted BOOLEAN NOT NULL,
+  is_vetted BOOLEAN NOT NULL,
   buddify BOOLEAN NOT NULL,
   FOREIGN KEY (u_id) REFERENCES "user"(u_id),
   PRIMARY KEY (u_id)
@@ -26,7 +26,7 @@ CREATE TABLE buddy
 (
   b_id SERIAL PRIMARY KEY,
   buddy_rating_avg FLOAT NOT NULL,
-  is_active BOOLEAN NOT NULL,
+  is_active BOOLEAN,
   u_id INT NOT NULL,
   FOREIGN KEY (u_id) REFERENCES "user"(u_id)
 );
@@ -43,6 +43,7 @@ CREATE TABLE request
 (
   request_date VARCHAR(100) NOT NULL,
   request_meeting_point VARCHAR(100) NOT NULL,
+  request_destination VARCHAR(100) NOT NULL,
   stat VARCHAR(100) NOT NULL,
   r_id INT NOT NULL,
   b_id INT,
