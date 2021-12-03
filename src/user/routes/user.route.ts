@@ -363,7 +363,7 @@ export default function UserRouter(): Router {
           returnCode: 200,
           messages: [],
           errors: [],
-          data: true,
+          data: success,
         };
         res.status(response.returnCode).send(response);
       },
