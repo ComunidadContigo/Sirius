@@ -11,8 +11,20 @@ export default function AuthRouter(): Router {
   const router: Router = Router();
 
   /**
-   * Login user
-   * POST /user/login
+   * @api {post} /login/ Login to Contigo
+   * @apiName Login
+   * @apiGroup Auth
+   *
+   * @apiBody {String} email E-mail of the User.
+   * @apiBody {String} password Password of the User.
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (201) {RefreshToken} data Any data returned by the request.
+   * @apiSuccess (201) {Number} data.u_id User that just logged in.
+   * @apiSuccess (201) {String} data.token JWT that contains information about the logged in User.
    */
   router.post("/login", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
