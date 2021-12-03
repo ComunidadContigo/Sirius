@@ -342,4 +342,25 @@ describe("User Controller", () => {
       }
     );
   });
+
+  it("should return if a user is vetted", (done: Done) => {
+    const uc: UserController = new UserController();
+    const pool: Pool = getPool(pgmock);
+
+    pgmock.add('SELECT is_vetted FROM vetting WHERE u_id = $1;', ["number"], {
+      rowCount: 1,
+      rows: [true],
+    });
+
+    uc.isVetted(pool, 1).then(
+      (success: boolean) => {
+        expect(success).to.be.true;
+        done();
+      },
+      (err) => {
+        done(err.message);
+      }
+    );
+  });
+
 });
