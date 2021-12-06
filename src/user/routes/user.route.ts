@@ -8,7 +8,7 @@ import AuthMiddleware from "../../common/middleware/auth.middleware";
 import multer from "multer";
 import fs from "fs";
 import util from "util";
-import internal from "stream";
+import aws, { AWSError, S3 } from "aws-sdk";
 
 export default function UserRouter(): Router {
   const userController: UserController = new UserController();
@@ -437,15 +437,117 @@ export default function UserRouter(): Router {
   // GET /user/picture/:id
   router.get("/profile/:id", async (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    const picture = await userController.getUserPicture(db, +req.params.id);
-    picture.pipe(res);
+    try {
+      const picture = await userController.getUserPicture(db, +req.params.id);
+      picture
+        .on(
+          "httpHeaders",
+          (
+            statusCode: number,
+            headers: any,
+            response: aws.Response<S3.GetObjectOutput, AWSError>,
+            statusMessage: string
+          ) => {
+            if (statusCode > 300) {
+              const response1: HttpResponse = {
+                success: false,
+                returnCode: statusCode,
+                messages: [statusMessage],
+                errors: [response.httpResponse.body as string],
+              };
+              res.status(response1.returnCode).send(response1);
+              //return;
+            }
+            //picture.createReadStream().pipe(res);
+          }
+        )
+        .createReadStream()
+        .on("error", (err) => {
+          const response1: HttpResponse = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+          res.status(response1.returnCode).send(response1);
+        })
+        .pipe(res);
+    } catch (err) {
+      let response: HttpResponse;
+      if (err instanceof HttpError) {
+        response = {
+          success: false,
+          returnCode: err.status,
+          messages: [],
+          errors: [err.message, err.stack || ""],
+        };
+      } else {
+        response = {
+          success: false,
+          returnCode: 500,
+          messages: [],
+          errors: [(err as Error).message],
+        };
+      }
+      res.status(response.returnCode).send(response);
+    }
   });
 
   // Get picture key
   // GET /user/picture/:key
   router.get("/picture/:key", async (req: Request, res: Response) => {
-    const picture = await userController.getPicture(req.params.key);
-    picture.pipe(res);
+    try {
+      const picture = await userController.getPicture(req.params.key);
+      picture
+        .on(
+          "httpHeaders",
+          (
+            statusCode: number,
+            headers: any,
+            response: aws.Response<S3.GetObjectOutput, AWSError>,
+            statusMessage: string
+          ) => {
+            if (statusCode > 300) {
+              const response1: HttpResponse = {
+                success: false,
+                returnCode: statusCode,
+                messages: [statusMessage],
+                errors: [response.httpResponse.body as string],
+              };
+              res.status(response1.returnCode).send(response1);
+            }
+          }
+        )
+        .createReadStream()
+        .on("error", (err) => {
+          const response1: HttpResponse = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+          res.status(response1.returnCode).send(response1);
+        })
+        .pipe(res);
+    } catch (err) {
+      let response: HttpResponse;
+      if (err instanceof HttpError) {
+        response = {
+          success: false,
+          returnCode: err.status,
+          messages: [],
+          errors: [err.message, err.stack || ""],
+        };
+      } else {
+        response = {
+          success: false,
+          returnCode: 500,
+          messages: [],
+          errors: [(err as Error).message],
+        };
+      }
+      res.status(response.returnCode).send(response);
+    }
   });
 
   return router;
