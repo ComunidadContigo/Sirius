@@ -61,6 +61,18 @@ export default function AuthRouter(): Router {
     );
   });
 
+  /**
+   * @api {delete} /logout/:id Logout of Contigo
+   * @apiName Logout
+   * @apiGroup Auth
+   *
+   * @apiParams {Number} id ID of the user.
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.delete("/logout/:id", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     authController.logout(db, +req.params.id).then(
@@ -95,6 +107,19 @@ export default function AuthRouter(): Router {
     );
   });
 
+  /**
+   * @api {post} /token/ Logout of Contigo
+   * @apiName Logout
+   * @apiGroup Auth
+   *
+   * @apiBody {RefreshToken} RefreshToken RefreshToken of the User.
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (203) {String} data JWT that contains information about the logged in User.
+   */
   router.post("/token", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     authController.authenticate(db, req.body as RefreshToken).then(
@@ -130,6 +155,19 @@ export default function AuthRouter(): Router {
     );
   });
 
+  /**
+   * @api {put} /expo/:id Save Expo Token of Contigo
+   * @apiName ExpoToken
+   * @apiGroup Auth
+   *
+   * @apiBody {String} Refresh Token of the User.
+   * @apiParams {Number} id User Id
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.put("/expo/:id", authMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     authController.saveExpoToken(db, req.body.token, +req.params.id).then(
