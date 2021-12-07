@@ -20,7 +20,7 @@ export const getBuddiesWithExpoTokens = async (
 };
 
 export const getUnfulfilledRequests = async (db: Pool): Promise<ReqModel[]> => {
-  const query = "SELECT * FROM request WHERE stat = 'UNFULLFILLED'";
+  const query = "SELECT * FROM request WHERE stat = 'UNFULFILLED'";
   const queryRes: QueryResult<ReqModel> = await db.query(query);
   if (queryRes.rowCount < 0) {
     return [];
