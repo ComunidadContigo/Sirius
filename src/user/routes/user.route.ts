@@ -568,8 +568,18 @@ export default function UserRouter(): Router {
     }
   );
 
-  // Get User Profile Picture by ID
-  // GET /user/picture/:id
+  /**
+   * @api {get} /profile/:id Get user profile picture if available.
+   * @apiName getUserPicture
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id for the User picture to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.get("/profile/:id", async (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     try {
@@ -628,8 +638,18 @@ export default function UserRouter(): Router {
     }
   });
 
-  // Get picture key
-  // GET /user/picture/:key
+  /**
+   * @api {get} /picture/:key Get user profile picture if available.
+   * @apiName getUserPicture
+   * @apiGroup User
+   *
+   * @apiParam {String} key Name of the picture in the AWS Bucket
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.get("/picture/:key", async (req: Request, res: Response) => {
     try {
       const picture = await userController.getPicture(req.params.key);
