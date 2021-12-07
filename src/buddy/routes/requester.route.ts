@@ -65,7 +65,7 @@ export default function RequesterRouter(): Router {
    * @apiName GetRequesterByID
    * @apiGroup Requester
    *
-   * @apiParams {Number} id Requester ID.
+   * @apiParam {Number} id Requester ID.
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -116,7 +116,7 @@ export default function RequesterRouter(): Router {
    * @apiName GetRequesterByUID
    * @apiGroup Requester
    *
-   * @apiParams {Number} id User Id for the requester to get
+   * @apiParam {Number} id User Id for the requester to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -213,7 +213,7 @@ export default function RequesterRouter(): Router {
    * @apiName updateRequesterById
    * @apiGroup Requester
    *
-   * @apiParams {Number} id Id of the Requester to be updated
+   * @apiParam {Number} id Id of the Requester to be updated
    * @apiBody {Requester} Requester Requester Details
    *
    * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
@@ -262,7 +262,7 @@ export default function RequesterRouter(): Router {
    * @apiName deleteRequesterById
    * @apiGroup Requester
    *
-   * @apiParams {Number} id Id of the Requester to be deleted
+   * @apiParam {Number} id Id of the Requester to be deleted
    *
    * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (203) {Number} returnCode Return code of the response.

@@ -65,7 +65,7 @@ export default function BuddyRouter(): Router {
    * @apiName GetBuddyByID
    * @apiGroup Buddy
    *
-   * @apiParams {Number} id Id for the buddy to get
+   * @apiParam {Number} id Id for the buddy to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -163,7 +163,7 @@ export default function BuddyRouter(): Router {
    * @apiName updateBuddyById
    * @apiGroup Buddy
    *
-   * @apiParams {Number} id Id of the Buddy to be updated
+   * @apiParam {Number} id Id of the Buddy to be updated
    * @apiBody {Buddy} Buddy Buddy Details
    *
    * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
@@ -210,7 +210,7 @@ export default function BuddyRouter(): Router {
    * @apiName deleteBuddyById
    * @apiGroup Buddy
    *
-   * @apiParams {Number} id Id of the Buddy to be deleted
+   * @apiParam {Number} id Id of the Buddy to be deleted
    *
    * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (203) {Number} returnCode Return code of the response.
@@ -256,7 +256,7 @@ export default function BuddyRouter(): Router {
    * @apiName GetBuddyByUID
    * @apiGroup Buddy
    *
-   * @apiParams {Number} id User Id for the buddy to get
+   * @apiParam {Number} id User Id for the buddy to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.

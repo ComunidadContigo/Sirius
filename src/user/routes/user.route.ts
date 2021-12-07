@@ -71,7 +71,7 @@ export default function UserRouter(): Router {
    * @apiName GetUserByID
    * @apiGroup User
    *
-   * @apiParams {Number} id Id for the buddy to get
+   * @apiParam {Number} id Id for the buddy to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -175,7 +175,7 @@ export default function UserRouter(): Router {
    * @apiName updateBuddyById
    * @apiGroup Buddy
    *
-   * @apiParams {Number} id Id of the Buddy to be updated
+   * @apiParam {Number} id Id of the Buddy to be updated
    * @apiBody {Buddy} Buddy Buddy Details
    *
    * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
@@ -259,7 +259,7 @@ export default function UserRouter(): Router {
    * @apiName deleteUserById
    * @apiGroup User
    *
-   * @apiParams {Number} id Id of the User to be deleted
+   * @apiParam {Number} id Id of the User to be deleted
    *
    * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (203) {Number} returnCode Return code of the response.
@@ -305,7 +305,7 @@ export default function UserRouter(): Router {
    * @apiName vettingProcessComplete
    * @apiGroup User
    *
-   * @apiParams {Number} id Id of the User to update vetting table.
+   * @apiParam {Number} id Id of the User to update vetting table.
    *
    * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (202) {Number} returnCode Return code of the response.
@@ -350,7 +350,7 @@ export default function UserRouter(): Router {
    * @apiName getRequesterID
    * @apiGroup User
    *
-   * @apiParams {Number} id Requester Id for the User to get
+   * @apiParam {Number} id Requester Id for the User to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -412,7 +412,7 @@ export default function UserRouter(): Router {
    * @apiName getBuddyID
    * @apiGroup User
    *
-   * @apiParams {Number} id Buddy Id for the User to get
+   * @apiParam {Number} id Buddy Id for the User to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -470,7 +470,7 @@ export default function UserRouter(): Router {
    * @apiName isVetted
    * @apiGroup User
    *
-   * @apiParams {Number} id Id for the User to get
+   * @apiParam {Number} id Id for the User to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -518,7 +518,7 @@ export default function UserRouter(): Router {
    * @apiName uploadPicture
    * @apiGroup User
    *
-   * @apiParams {Number} User User ID to update user picture value.
+   * @apiParam {Number} User User ID to update user picture value.
    * @apiBody {file} User Profile Picture
    *
    * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
