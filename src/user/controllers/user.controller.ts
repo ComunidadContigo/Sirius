@@ -179,6 +179,21 @@ export default class UserController {
     return queryResult.rows[0];
   }
 
+  private async hasPicture(db: Pool, id: number): Promise<boolean> {
+    const query = "SELECT pictureKey FROM pictures WHERE u_id = $1";
+    const queryResult: QueryResult = await db.query(query, [id]);
+    return queryResult.rowCount == 1;
+  }
+
+  private async getPictureKey(db: Pool, id: number): Promise<string> {
+    const query = "SELECT pictureKey FROM pictures WHERE u_id = $1";
+    const queryResult: QueryResult = await db.query(query, [id]);
+    if (queryResult.rowCount == 0) {
+      throw new HttpError(404, `No picture found for user with id = ${id}`);
+    }
+    return queryResult.rows[0];
+  }
+
   public async uploadPicture(
     db: Pool,
     id: number,
@@ -203,12 +218,24 @@ export default class UserController {
       Key: file.filename,
     };
     //check if user exists.
-    this.getUserByID(db, id);
-
-    const query = 'UPDATE "user" SET picture = $1 WHERE u_id = $2;';
-    const queryResult: QueryResult = await db.query(query, [file.filename, id]);
-    s3.upload(uploadParameters).promise();
-    return queryResult.rowCount == 1;
+    if (await this.hasPicture(db, id)) {
+      const query = "UPDATE pictures SET pictureKey = $1 WHERE u_id = $2;";
+      const queryResult: QueryResult = await db.query(query, [
+        file.filename,
+        id,
+      ]);
+      s3.upload(uploadParameters).promise();
+      return queryResult.rowCount == 1;
+    } else {
+      const query =
+        "INSERT INTO pictures" + "(pictureKey, u_id) " + "VALUES ($1, $2);";
+      const queryResult: QueryResult = await db.query(query, [
+        file.filename,
+        id,
+      ]);
+      s3.upload(uploadParameters).promise();
+      return queryResult.rowCount == 1;
+    }
   }
 
   public async getUserPicture(
@@ -228,9 +255,9 @@ export default class UserController {
 
     //Check if user has a picture
 
-    const user = await this.getUserByID(db, id);
+    const picKey = await this.getPictureKey(db, id);
 
-    if (user.picture === undefined || user.picture === null) {
+    if (picKey === undefined || picKey === null) {
       const downloadParameters = {
         Key: "a90ac38defefa8d2741ab552172affd9",
         Bucket: bucketName,
@@ -239,7 +266,7 @@ export default class UserController {
       return s3.getObject(downloadParameters);
     } else {
       const downloadParameters = {
-        Key: user.picture,
+        Key: picKey,
         Bucket: bucketName,
       };
 
