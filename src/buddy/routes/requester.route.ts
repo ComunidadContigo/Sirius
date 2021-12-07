@@ -11,9 +11,17 @@ export default function RequesterRouter(): Router {
   const router: Router = Router();
 
   /**
-   * Get All Requesters
-   * GET /requester
-   * Optional Body = {limit: number} to limit amount of results.
+   * @api {get} / Get All Requesters
+   * @apiName GetAllRequesters
+   * @apiGroup Requesters
+   *
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Requester[]} data List of all requesters.
+   * @apiSuccess (200) {Number} rowCount Amount of requesters.
    */
   router.get("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -53,8 +61,20 @@ export default function RequesterRouter(): Router {
   });
 
   /**
-   * Get Requester by ID
-   * GET /requester/:id
+   * @api {get} /:id Get Requester by ID
+   * @apiName GetRequesterByID
+   * @apiGroup Requester
+   *
+   * @apiParams {Number} id Requester ID.
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Requester} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.r_id Requester ID.
+   * @apiSuccess (200) {Number} data.requester_rating_avg Requester rating average.
+   * @apiSuccess (200) {Number} data.u_id Requester User ID.
    */
   router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -91,6 +111,22 @@ export default function RequesterRouter(): Router {
     );
   });
 
+  /**
+   * @api {get} /user/:id Get Requester by User ID
+   * @apiName GetRequesterByUID
+   * @apiGroup Requester
+   *
+   * @apiParams {Number} id User Id for the requester to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Requester} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.r_id Requester ID.
+   * @apiSuccess (200) {Number} data.requester_rating_avg Requester rating average.
+   * @apiSuccess (200) {Number} data.u_id Requester User ID.
+   */
   router.get("/user/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     requesterController.getRequesterByUID(db, +req.params.id).then(
@@ -127,9 +163,16 @@ export default function RequesterRouter(): Router {
   });
 
   /**
-   * Create Requester
-   * POST /requester
-   * Body should match the requester model.
+   * @api {post} / Create a new Requester
+   * @apiName createRequester
+   * @apiGroup Requester
+   *
+   * @apiBody {Requester} Requester Requester Details
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
    */
   router.post("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -166,9 +209,17 @@ export default function RequesterRouter(): Router {
   });
 
   /**
-   * Update Requester by ID
-   * PUT /requester/:id
-   * Body should match the requester model.
+   * @api {put} /:id Update a Requester by ID
+   * @apiName updateRequesterById
+   * @apiGroup Requester
+   *
+   * @apiParams {Number} id Id of the Requester to be updated
+   * @apiBody {Requester} Requester Requester Details
+   *
+   * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (202) {Number} returnCode Return code of the response.
+   * @apiSuccess (202) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (202) {String[]} errors Any errors returned by the processing of the request.
    */
   router.put("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -207,9 +258,16 @@ export default function RequesterRouter(): Router {
   });
 
   /**
-   * Delete Requester by ID
-   * DELETE /requester/:id
+   * @api {delete} /:id Delete a Requester by ID
+   * @apiName deleteRequesterById
+   * @apiGroup Requester
    *
+   * @apiParams {Number} id Id of the Requester to be deleted
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
    */
   router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
