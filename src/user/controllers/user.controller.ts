@@ -180,12 +180,12 @@ export default class UserController {
   }
 
   private async hasPicture(db: Pool, id: number): Promise<boolean> {
-    const query = "SELECT pictureKey FROM pictures WHERE u_id = $1";
+    const query = "SELECT * FROM pictures WHERE u_id = $1";
     const queryResult: QueryResult = await db.query(query, [id]);
     return queryResult.rowCount == 1;
   }
 
-  private async getPictureKey(db: Pool, id: number): Promise<string> {
+  private async getUserPictureKey(db: Pool, id: number): Promise<string> {
     const query = "SELECT pictureKey FROM pictures WHERE u_id = $1";
     const queryResult: QueryResult = await db.query(query, [id]);
     if (queryResult.rowCount == 0) {
@@ -255,7 +255,7 @@ export default class UserController {
 
     //Check if user has a picture
 
-    const picKey = await this.getPictureKey(db, id);
+    const picKey = await this.getUserPictureKey(db, id);
 
     if (picKey === undefined || picKey === null) {
       const downloadParameters = {
@@ -275,6 +275,7 @@ export default class UserController {
   }
 
   public async getPicture(
+    db: Pool,
     key: string
   ): Promise<Request<S3.GetObjectOutput, AWSError>> {
     const bucketName = environment.bucket_name;
@@ -282,6 +283,9 @@ export default class UserController {
     const accessKeyId = environment.bucket_access_key;
     const secretAccessKey = environment.bucket_secret_key;
 
+    if (await this.getUserPictureKey(db, 1)) {
+      return;
+    }
     const s3 = new S3({
       region,
       accessKeyId,
