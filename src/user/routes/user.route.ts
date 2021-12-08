@@ -651,8 +651,9 @@ export default function UserRouter(): Router {
    * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
    */
   router.get("/picture/:key", async (req: Request, res: Response) => {
+    const db: Pool = req.app.get("dbPool");
     try {
-      const picture = await userController.getPicture(req.params.key);
+      const picture = await userController.getPicture(db, req.params.key);
       picture
         .on(
           "httpHeaders",

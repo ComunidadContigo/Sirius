@@ -186,12 +186,30 @@ export default class UserController {
   }
 
   private async getUserPictureKey(db: Pool, id: number): Promise<string> {
-    const query = "SELECT pictureKey FROM pictures WHERE u_id = $1";
+    const query = "SELECT picture FROM pictures WHERE u_id = $1";
     const queryResult: QueryResult = await db.query(query, [id]);
     if (queryResult.rowCount == 0) {
       throw new HttpError(404, `No picture found for user with id = ${id}`);
     }
     return queryResult.rows[0];
+  }
+
+  private async getPictureByKey(db: Pool, key: string): Promise<string> {
+    const query = "SELECT picture FROM pictures WHERE picture = $1";
+    const queryResult: QueryResult = await db.query(query, [key]);
+    if (queryResult.rowCount == 0) {
+      throw new HttpError(404, `No picture found with key = ${key}`);
+    }
+    return queryResult.rows[0];
+  }
+
+  private async getPictures(db: Pool): Promise<string[]> {
+    const query = "SELECT picture FROM pictures";
+    const queryResult: QueryResult = await db.query(query);
+    if (queryResult.rowCount == 0) {
+      throw new HttpError(404, `No pictures`);
+    }
+    return queryResult.rows;
   }
 
   public async uploadPicture(
@@ -219,7 +237,7 @@ export default class UserController {
     };
     //check if user exists.
     if (await this.hasPicture(db, id)) {
-      const query = "UPDATE pictures SET pictureKey = $1 WHERE u_id = $2;";
+      const query = "UPDATE pictures SET picture = $1 WHERE u_id = $2;";
       const queryResult: QueryResult = await db.query(query, [
         file.filename,
         id,
@@ -228,7 +246,7 @@ export default class UserController {
       return queryResult.rowCount == 1;
     } else {
       const query =
-        "INSERT INTO pictures" + "(pictureKey, u_id) " + "VALUES ($1, $2);";
+        "INSERT INTO pictures" + "(picture, u_id) " + "VALUES ($1, $2);";
       const queryResult: QueryResult = await db.query(query, [
         file.filename,
         id,
@@ -257,7 +275,7 @@ export default class UserController {
 
     const picKey = await this.getUserPictureKey(db, id);
 
-    if (picKey === undefined || picKey === null) {
+    if (picKey === undefined || picKey === null || picKey === "") {
       const downloadParameters = {
         Key: "a90ac38defefa8d2741ab552172affd9",
         Bucket: bucketName,
@@ -283,9 +301,8 @@ export default class UserController {
     const accessKeyId = environment.bucket_access_key;
     const secretAccessKey = environment.bucket_secret_key;
 
-    if (await this.getUserPictureKey(db, 1)) {
-      return;
-    }
+    const picKey = await this.getPictureByKey(db, key);
+
     const s3 = new S3({
       region,
       accessKeyId,
@@ -293,7 +310,7 @@ export default class UserController {
     });
 
     const downloadParameters = {
-      Key: key,
+      Key: picKey,
       Bucket: bucketName,
     };
 
