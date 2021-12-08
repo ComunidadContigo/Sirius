@@ -66,7 +66,7 @@ export default function AuthRouter(): Router {
    * @apiName Logout
    * @apiGroup Auth
    *
-   * @apiParams {Number} id ID of the user.
+   * @apiParam {Number} id ID of the user.
    *
    * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (203) {Number} returnCode Return code of the response.
@@ -161,7 +161,7 @@ export default function AuthRouter(): Router {
    * @apiGroup Auth
    *
    * @apiBody {String} Refresh Token of the User.
-   * @apiParams {Number} id User Id
+   * @ {Number} id User Id
    *
    * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (203) {Number} returnCode Return code of the response.

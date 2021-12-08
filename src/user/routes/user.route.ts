@@ -8,7 +8,7 @@ import AuthMiddleware from "../../common/middleware/auth.middleware";
 import multer from "multer";
 import fs from "fs";
 import util from "util";
-import internal from "stream";
+import aws, { AWSError, S3 } from "aws-sdk";
 
 export default function UserRouter(): Router {
   const userController: UserController = new UserController();
@@ -71,7 +71,7 @@ export default function UserRouter(): Router {
    * @apiName GetUserByID
    * @apiGroup User
    *
-   * @apiParams {Number} id Id for the buddy to get
+   * @apiParam {Number} id Id for the buddy to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -175,7 +175,7 @@ export default function UserRouter(): Router {
    * @apiName updateBuddyById
    * @apiGroup Buddy
    *
-   * @apiParams {Number} id Id of the Buddy to be updated
+   * @apiParam {Number} id Id of the Buddy to be updated
    * @apiBody {Buddy} Buddy Buddy Details
    *
    * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
@@ -259,7 +259,7 @@ export default function UserRouter(): Router {
    * @apiName deleteUserById
    * @apiGroup User
    *
-   * @apiParams {Number} id Id of the User to be deleted
+   * @apiParam {Number} id Id of the User to be deleted
    *
    * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (203) {Number} returnCode Return code of the response.
@@ -305,7 +305,7 @@ export default function UserRouter(): Router {
    * @apiName vettingProcessComplete
    * @apiGroup User
    *
-   * @apiParams {Number} id Id of the User to update vetting table.
+   * @apiParam {Number} id Id of the User to update vetting table.
    *
    * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (202) {Number} returnCode Return code of the response.
@@ -350,7 +350,7 @@ export default function UserRouter(): Router {
    * @apiName getRequesterID
    * @apiGroup User
    *
-   * @apiParams {Number} id Requester Id for the User to get
+   * @apiParam {Number} id Requester Id for the User to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -412,7 +412,7 @@ export default function UserRouter(): Router {
    * @apiName getBuddyID
    * @apiGroup User
    *
-   * @apiParams {Number} id Buddy Id for the User to get
+   * @apiParam {Number} id Buddy Id for the User to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -470,7 +470,7 @@ export default function UserRouter(): Router {
    * @apiName isVetted
    * @apiGroup User
    *
-   * @apiParams {Number} id Id for the User to get
+   * @apiParam {Number} id Id for the User to get
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
    * @apiSuccess (200) {Number} returnCode Return code of the response.
@@ -518,7 +518,7 @@ export default function UserRouter(): Router {
    * @apiName uploadPicture
    * @apiGroup User
    *
-   * @apiParams {Number} User User ID to update user picture value.
+   * @apiParam {Number} User User ID to update user picture value.
    * @apiBody {file} User Profile Picture
    *
    * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
@@ -568,19 +568,141 @@ export default function UserRouter(): Router {
     }
   );
 
-  // Get User Profile Picture by ID
-  // GET /user/picture/:id
+  /**
+   * @api {get} /profile/:id Get user profile picture if available.
+   * @apiName getUserPicture
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id for the User picture to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.get("/profile/:id", async (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
-    const picture = await userController.getUserPicture(db, +req.params.id);
-    picture.pipe(res);
+    try {
+      const picture = await userController.getUserPicture(db, +req.params.id);
+      picture
+        .on(
+          "httpHeaders",
+          (
+            statusCode: number,
+            headers: any,
+            response: aws.Response<S3.GetObjectOutput, AWSError>,
+            statusMessage: string
+          ) => {
+            if (statusCode > 300) {
+              const response1: HttpResponse = {
+                success: false,
+                returnCode: statusCode,
+                messages: [statusMessage],
+                errors: [response.httpResponse.body as string],
+              };
+              res.status(response1.returnCode).send(response1);
+              //return;
+            }
+            //picture.createReadStream().pipe(res);
+          }
+        )
+        .createReadStream()
+        .on("error", (err) => {
+          const response1: HttpResponse = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+          res.status(response1.returnCode).send(response1);
+        })
+        .pipe(res);
+    } catch (err) {
+      let response: HttpResponse;
+      if (err instanceof HttpError) {
+        response = {
+          success: false,
+          returnCode: err.status,
+          messages: [],
+          errors: [err.message, err.stack || ""],
+        };
+      } else {
+        response = {
+          success: false,
+          returnCode: 500,
+          messages: [],
+          errors: [(err as Error).message],
+        };
+      }
+      res.status(response.returnCode).send(response);
+    }
   });
 
-  // Get picture key
-  // GET /user/picture/:key
+  /**
+   * @api {get} /picture/:key Get user profile picture if available.
+   * @apiName getUserPicture
+   * @apiGroup User
+   *
+   * @apiParam {String} key Name of the picture in the AWS Bucket
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.get("/picture/:key", async (req: Request, res: Response) => {
-    const picture = await userController.getPicture(req.params.key);
-    picture.pipe(res);
+    try {
+      const picture = await userController.getPicture(req.params.key);
+      picture
+        .on(
+          "httpHeaders",
+          (
+            statusCode: number,
+            headers: any,
+            response: aws.Response<S3.GetObjectOutput, AWSError>,
+            statusMessage: string
+          ) => {
+            if (statusCode > 300) {
+              const response1: HttpResponse = {
+                success: false,
+                returnCode: statusCode,
+                messages: [statusMessage],
+                errors: [response.httpResponse.body as string],
+              };
+              res.status(response1.returnCode).send(response1);
+            }
+          }
+        )
+        .createReadStream()
+        .on("error", (err) => {
+          const response1: HttpResponse = {
+            success: false,
+            returnCode: 500,
+            messages: [],
+            errors: [err.message],
+          };
+          res.status(response1.returnCode).send(response1);
+        })
+        .pipe(res);
+    } catch (err) {
+      let response: HttpResponse;
+      if (err instanceof HttpError) {
+        response = {
+          success: false,
+          returnCode: err.status,
+          messages: [],
+          errors: [err.message, err.stack || ""],
+        };
+      } else {
+        response = {
+          success: false,
+          returnCode: 500,
+          messages: [],
+          errors: [(err as Error).message],
+        };
+      }
+      res.status(response.returnCode).send(response);
+    }
   });
 
   return router;
