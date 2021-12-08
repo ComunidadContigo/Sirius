@@ -13,7 +13,7 @@ export default function RequesterRouter(): Router {
   /**
    * @api {get} / Get All Requesters
    * @apiName GetAllRequesters
-   * @apiGroup Requesters
+   * @apiGroup Requester
    *
    *
    * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.

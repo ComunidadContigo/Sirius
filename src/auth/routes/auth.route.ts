@@ -108,17 +108,17 @@ export default function AuthRouter(): Router {
   });
 
   /**
-   * @api {post} /token/ Logout of Contigo
-   * @apiName Logout
+   * @api {post} /token/ Create an access token
+   * @apiName AccessToken
    * @apiGroup Auth
    *
    * @apiBody {RefreshToken} RefreshToken RefreshToken of the User.
    *
-   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
-   * @apiSuccess (203) {Number} returnCode Return code of the response.
-   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
-   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
-   * @apiSuccess (203) {String} data JWT that contains information about the logged in User.
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (201) {String} data JWT that lets users request against the API.
    */
   router.post("/token", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -163,10 +163,10 @@ export default function AuthRouter(): Router {
    * @apiBody {String} Refresh Token of the User.
    * @ {Number} id User Id
    *
-   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
-   * @apiSuccess (203) {Number} returnCode Return code of the response.
-   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
-   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (202) {Number} returnCode Return code of the response.
+   * @apiSuccess (202) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (202) {String[]} errors Any errors returned by the processing of the request.
    */
   router.put("/expo/:id", authMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -174,7 +174,7 @@ export default function AuthRouter(): Router {
       (success: boolean) => {
         const response: HttpResponse = {
           success: success,
-          returnCode: 201,
+          returnCode: 202,
           messages: ["Expo Push Token saved."],
           errors: [],
         };

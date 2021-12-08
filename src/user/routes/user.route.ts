@@ -514,7 +514,7 @@ export default function UserRouter(): Router {
   });
 
   /**
-   * @api {post} /profile/:id Create a new User
+   * @api {post} /profile/:id Upload a user picture
    * @apiName uploadPicture
    * @apiGroup User
    *
