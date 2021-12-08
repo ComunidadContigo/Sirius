@@ -11,9 +11,17 @@ export default function BuddyRouter(): Router {
   const router: Router = Router();
 
   /**
-   * Get All Buddies
-   * GET /buddy
-   * Optional Body = {limit: number} to limit amount of results.
+   * @api {get} / Get All Buddies
+   * @apiName GetAllBuddies
+   * @apiGroup Buddy
+   *
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Buddy[]} data List of all buddies.
+   * @apiSuccess (200) {Number} rowCount Amount of buddies.
    */
   router.get("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -53,19 +61,32 @@ export default function BuddyRouter(): Router {
   });
 
   /**
-   * Get Buddy by ID
-   * GET /buddy/:id
+   * @api {get} /:id Get Buddy by ID
+   * @apiName GetBuddyByID
+   * @apiGroup Buddy
+   *
+   * @apiParam {Number} id Id for the buddy to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Buddy} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.b_id Buddy ID.
+   * @apiSuccess (200) {Number} data.buddy_rating_avg Buddy rating average.
+   * @apiSuccess (200) {Boolean} data.is_active Used to check if a Buddy is accepting requests.
+   * @apiSuccess (200) {Number} data.u_id Buddy User ID.
    */
   router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     buddyController.getBuddyByID(db, +req.params.id).then(
-      (reqmod: Buddy) => {
+      (buddy: Buddy) => {
         const response: HttpResponse<Buddy> = {
           success: true,
           returnCode: 200,
           messages: [],
           errors: [],
-          data: reqmod,
+          data: buddy,
         };
         res.status(response.returnCode).send(response);
       },
@@ -92,9 +113,16 @@ export default function BuddyRouter(): Router {
   });
 
   /**
-   * Create Buddy
-   * POST /buddy
-   * Body should match the buddy model.
+   * @api {post} / Create a new Buddy
+   * @apiName createBuddy
+   * @apiGroup Buddy
+   *
+   * @apiBody {Buddy} Buddy Buddy Details
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
    */
   router.post("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -131,9 +159,17 @@ export default function BuddyRouter(): Router {
   });
 
   /**
-   * Update Buddy by ID
-   * PUT /buddy/:id
-   * Body should match the buddy model.
+   * @api {put} /:id Update a Buddy by ID
+   * @apiName updateBuddyById
+   * @apiGroup Buddy
+   *
+   * @apiParam {Number} id Id of the Buddy to be updated
+   * @apiBody {Buddy} Buddy Buddy Details
+   *
+   * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (202) {Number} returnCode Return code of the response.
+   * @apiSuccess (202) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (202) {String[]} errors Any errors returned by the processing of the request.
    */
   router.put("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -170,9 +206,16 @@ export default function BuddyRouter(): Router {
   });
 
   /**
-   * Delete Buddy by ID
-   * DELETE /buddy/:id
+   * @api {delete} /:id Delete a Buddy by ID
+   * @apiName deleteBuddyById
+   * @apiGroup Buddy
    *
+   * @apiParam {Number} id Id of the Buddy to be deleted
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
    */
   router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -208,16 +251,33 @@ export default function BuddyRouter(): Router {
     );
   });
 
+  /**
+   * @api {get} /:id Get Buddy by User ID
+   * @apiName GetBuddyByUID
+   * @apiGroup Buddy
+   *
+   * @apiParam {Number} id User Id for the buddy to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Buddy} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.b_id Buddy ID.
+   * @apiSuccess (200) {Number} data.buddy_rating_avg Buddy rating average.
+   * @apiSuccess (200) {Boolean} data.is_active Used to check if a Buddy is accepting requests.
+   * @apiSuccess (200) {Number} data.u_id Buddy User ID.
+   */
   router.get("/user/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     buddyController.getBuddyByUID(db, +req.params.id).then(
-      (reqmod: Buddy) => {
+      (buddy: Buddy) => {
         const response: HttpResponse<Buddy> = {
           success: true,
           returnCode: 200,
           messages: [],
           errors: [],
-          data: reqmod,
+          data: buddy,
         };
         res.status(response.returnCode).send(response);
       },

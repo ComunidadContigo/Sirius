@@ -11,8 +11,20 @@ export default function AuthRouter(): Router {
   const router: Router = Router();
 
   /**
-   * Login user
-   * POST /user/login
+   * @api {post} /login/ Login to Contigo
+   * @apiName Login
+   * @apiGroup Auth
+   *
+   * @apiBody {String} email E-mail of the User.
+   * @apiBody {String} password Password of the User.
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (201) {RefreshToken} data Any data returned by the request.
+   * @apiSuccess (201) {Number} data.u_id User that just logged in.
+   * @apiSuccess (201) {String} data.token JWT that contains information about the logged in User.
    */
   router.post("/login", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
@@ -49,6 +61,18 @@ export default function AuthRouter(): Router {
     );
   });
 
+  /**
+   * @api {delete} /logout/:id Logout of Contigo
+   * @apiName Logout
+   * @apiGroup Auth
+   *
+   * @apiParam {Number} id ID of the user.
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.delete("/logout/:id", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     authController.logout(db, +req.params.id).then(
@@ -83,6 +107,19 @@ export default function AuthRouter(): Router {
     );
   });
 
+  /**
+   * @api {post} /token/ Create an access token
+   * @apiName AccessToken
+   * @apiGroup Auth
+   *
+   * @apiBody {RefreshToken} RefreshToken RefreshToken of the User.
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (201) {String} data JWT that lets users request against the API.
+   */
   router.post("/token", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     authController.authenticate(db, req.body as RefreshToken).then(
@@ -118,13 +155,26 @@ export default function AuthRouter(): Router {
     );
   });
 
+  /**
+   * @api {put} /expo/:id Save Expo Token of Contigo
+   * @apiName ExpoToken
+   * @apiGroup Auth
+   *
+   * @apiBody {String} Refresh Token of the User.
+   * @ {Number} id User Id
+   *
+   * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (202) {Number} returnCode Return code of the response.
+   * @apiSuccess (202) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (202) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.put("/expo/:id", authMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     authController.saveExpoToken(db, req.body.token, +req.params.id).then(
       (success: boolean) => {
         const response: HttpResponse = {
           success: success,
-          returnCode: 201,
+          returnCode: 202,
           messages: ["Expo Push Token saved."],
           errors: [],
         };

@@ -16,9 +16,19 @@ export default function UserRouter(): Router {
   const upload = multer({ dest: "uploads/" });
   const unlinkFile = util.promisify(fs.unlink);
 
-  // Get All Users
-  // GET /user
-  // Optional Body = { limit: number } to limit the results.
+  /**
+   * @api {get} / Get All Users
+   * @apiName GetAllUsers
+   * @apiGroup User
+   *
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {User[]} data List of all users.
+   * @apiSuccess (200) {Number} rowCount Amount of users.
+   */
   router.get("/", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     // TODO add functionality to handle LIMIT.
@@ -56,8 +66,29 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Get User by ID
-  // GET /user/:id
+  /**
+   * @api {get} /:id Get User by ID
+   * @apiName GetUserByID
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id for the buddy to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {User} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.u_id User ID.
+   * @apiSuccess (200) {String} data.email User email address.
+   * @apiSuccess (200) {String} data.password User password, hashed.
+   * @apiSuccess (200) {String} data.phone_number User phone number.
+   * @apiSuccess (200) {String} data.birth_date User birth date.
+   * @apiSuccess (200) {String} data.first_name User first name.
+   * @apiSuccess (200) {String} data.gender User gender.
+   * @apiSuccess (200) {String} data.last_name User last name.
+   * @apiSuccess (200) {String} data.user_last_location User last known location.
+   * @apiSuccess (200) {String} data.picture User profile picture name.
+   */
   router.get("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.getUserByID(db, +req.params.id).then(
@@ -93,9 +124,18 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Create User
-  // POST /user
-  // Body should match the user model.
+  /**
+   * @api {post} / Create a new User
+   * @apiName createUser
+   * @apiGroup User
+   *
+   * @apiBody {User} User User Details
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.post("/", (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.createUser(db, req.body as User).then(
@@ -130,9 +170,19 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Update User By ID
-  // PUT /user/:id
-  // Body should match the user model.
+  /**
+   * @api {put} /:id Update a Buddy by ID
+   * @apiName updateBuddyById
+   * @apiGroup Buddy
+   *
+   * @apiParam {Number} id Id of the Buddy to be updated
+   * @apiBody {Buddy} Buddy Buddy Details
+   *
+   * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (202) {Number} returnCode Return code of the response.
+   * @apiSuccess (202) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (202) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.put("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.updateUserByID(db, +req.params.id, req.body as User).then(
@@ -204,8 +254,18 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Delete User By ID
-  // DELETE /user/:id
+  /**
+   * @api {delete} /:id Delete a User by ID
+   * @apiName deleteUserById
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id of the User to be deleted
+   *
+   * @apiSuccess (203) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (203) {Number} returnCode Return code of the response.
+   * @apiSuccess (203) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (203) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.delete("/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.deleteUserByID(db, +req.params.id).then(
@@ -240,6 +300,18 @@ export default function UserRouter(): Router {
     );
   });
 
+  /**
+   * @api {put} /vetted/:id Update a Buddy by ID
+   * @apiName vettingProcessComplete
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id of the User to update vetting table.
+   *
+   * @apiSuccess (202) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (202) {Number} returnCode Return code of the response.
+   * @apiSuccess (202) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (202) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.put("/vetted/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.vettingProcessComplete(db, +req.params.id).then(
@@ -273,9 +345,29 @@ export default function UserRouter(): Router {
       }
     );
   });
-
-  // Get User by requester ID
-  // GET /user/requester/:id
+  /**
+   * @api {get} /requester/:id Get User by requester ID
+   * @apiName getRequesterID
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Requester Id for the User to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {User} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.u_id User ID.
+   * @apiSuccess (200) {String} data.email User email address.
+   * @apiSuccess (200) {String} data.password User password, hashed.
+   * @apiSuccess (200) {String} data.phone_number User phone number.
+   * @apiSuccess (200) {String} data.birth_date User birth date.
+   * @apiSuccess (200) {String} data.first_name User first name.
+   * @apiSuccess (200) {String} data.gender User gender.
+   * @apiSuccess (200) {String} data.last_name User last name.
+   * @apiSuccess (200) {String} data.user_last_location User last known location.
+   * @apiSuccess (200) {String} data.picture User profile picture name.
+   */
   router.get(
     "/requester/:id",
     AuthMiddleware,
@@ -315,8 +407,29 @@ export default function UserRouter(): Router {
     }
   );
 
-  // Get User by buddy ID
-  // GET /user/buddy/:id
+  /**
+   * @api {get} /buddy/:id Get User by Buddy ID
+   * @apiName getBuddyID
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Buddy Id for the User to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {User} data Any data returned by the request.
+   * @apiSuccess (200) {Number} data.u_id User ID.
+   * @apiSuccess (200) {String} data.email User email address.
+   * @apiSuccess (200) {String} data.password User password, hashed.
+   * @apiSuccess (200) {String} data.phone_number User phone number.
+   * @apiSuccess (200) {String} data.birth_date User birth date.
+   * @apiSuccess (200) {String} data.first_name User first name.
+   * @apiSuccess (200) {String} data.gender User gender.
+   * @apiSuccess (200) {String} data.last_name User last name.
+   * @apiSuccess (200) {String} data.user_last_location User last known location.
+   * @apiSuccess (200) {String} data.picture User profile picture name.
+   */
   router.get("/buddy/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.getBuddyID(db, +req.params.id).then(
@@ -352,8 +465,19 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Check if user is vetted by user id
-  // GET /user/isvetted/:id
+  /**
+   * @api {get} /isvetted/:id Check if User has been vetted.
+   * @apiName isVetted
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id for the User to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   * @apiSuccess (200) {Boolean} data Any data returned by the request.
+   */
   router.get("/isvetted/:id", AuthMiddleware, (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     userController.isVetted(db, +req.params.id).then(
@@ -389,8 +513,19 @@ export default function UserRouter(): Router {
     );
   });
 
-  // Add User Picture
-  // POST /user/picture
+  /**
+   * @api {post} /profile/:id Upload a user picture
+   * @apiName uploadPicture
+   * @apiGroup User
+   *
+   * @apiParam {Number} User User ID to update user picture value.
+   * @apiBody {file} User Profile Picture
+   *
+   * @apiSuccess (201) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (201) {Number} returnCode Return code of the response.
+   * @apiSuccess (201) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (201) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.post(
     "/profile/:id",
     upload.single("image"),
@@ -433,8 +568,18 @@ export default function UserRouter(): Router {
     }
   );
 
-  // Get User Profile Picture by ID
-  // GET /user/picture/:id
+  /**
+   * @api {get} /profile/:id Get user profile picture if available.
+   * @apiName getUserPicture
+   * @apiGroup User
+   *
+   * @apiParam {Number} id Id for the User picture to get
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.get("/profile/:id", async (req: Request, res: Response) => {
     const db: Pool = req.app.get("dbPool");
     try {
@@ -493,8 +638,18 @@ export default function UserRouter(): Router {
     }
   });
 
-  // Get picture key
-  // GET /user/picture/:key
+  /**
+   * @api {get} /picture/:key Get user profile picture if available.
+   * @apiName getUserPicture
+   * @apiGroup User
+   *
+   * @apiParam {String} key Name of the picture in the AWS Bucket
+   *
+   * @apiSuccess (200) {Boolean} success Whether the API request was successful or not.
+   * @apiSuccess (200) {Number} returnCode Return code of the response.
+   * @apiSuccess (200) {String[]} messages Any relevant information about the processing of the request.
+   * @apiSuccess (200) {String[]} errors Any errors returned by the processing of the request.
+   */
   router.get("/picture/:key", async (req: Request, res: Response) => {
     try {
       const picture = await userController.getPicture(req.params.key);
